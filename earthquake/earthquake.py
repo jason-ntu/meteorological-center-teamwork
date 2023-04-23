@@ -15,6 +15,7 @@ import urllib
 import re
 import json
 import math
+import hashlib
 import time
 
 options = Options()
@@ -28,88 +29,100 @@ options.add_argument("--enable-javascript")
 options.add_experimental_option('useAutomationExtension', False)
 options.add_argument('--disable-blink-features=AutomationControlled')
 
-# 創建一個ChromeDriver對象
 
-ua = UserAgent()
-userAgent = ua.random
+data = []
 
-driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()),options=options)
-# driver = webdriver.Chrome()
-driver.execute_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined})")
-driver.execute_cdp_cmd('Network.setUserAgentOverride', {"userAgent": userAgent})
+def crawler():
+    driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()),options=options)
+    ua = UserAgent()
+    userAgent = ua.random
+    driver.execute_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined})")
+    driver.execute_cdp_cmd('Network.setUserAgentOverride', {"userAgent": userAgent})
 
-locator = (By.ID, "table")
-driver.get('https://scweb.cwb.gov.tw/zh-tw/earthquake/data/')
+    locator = (By.ID, "table")
+    driver.get('https://scweb.cwb.gov.tw/zh-tw/earthquake/data/')
+    content = driver.execute_script('return document.getElementById("table").innerText;')
+    html_content = driver.execute_script('return document.body.innerHTML')
+    content = content.replace("\n", "")
+    m = hashlib.md5()
+    m.update(content.encode("utf-8"))
+    hash_val = m.hexdigest()
 
-content = driver.execute_script('return document.getElementById("table").innerText;')
-html_content = driver.execute_script('return document.body.innerHTML')
+    # print(content)
+    data = content.split('\t')
+    # print(data)
+    data = data[6:]
+    latest_week = []
+    earthquake = []
+    for i in range(len(data)//5):
+        earthquake.append(data[5*i:5*i+5])
+    # print(earthquake)
 
-content = content.replace("\n", "")
-# print(content)
-data = content.split('\t')
-# print(data)
-print()
-data = data[6:]
-earthquake = []
-for i in range(len(data)//5):
-    earthquake.append(data[5*i:5*i+5])
-# print(earthquake)
+    
+    for row in earthquake:
+        timestamp = parse(row[1])
+        now = datetime.now()
+        one_week_ago = now - timedelta(days=7)
+        if timestamp >= one_week_ago and timestamp <= now:
+            latest_week.append(row)
 
-latest_week = []
-for row in earthquake:
-    timestamp = parse(row[1])
-    now = datetime.now()
-    one_week_ago = now - timedelta(days=7)
-    if timestamp >= one_week_ago and timestamp <= now:
-        latest_week.append(row)
-print(latest_week)
+    anchor = "https://scweb.cwb.gov.tw/zh-tw/earthquake/details/"
+
+    # print(content)
+    soup = BeautifulSoup(html_content, "html.parser")
+    table = soup.find("table", {"id": "table"})
+    table = soup.find("tbody")
+    rows = table.find_all("tr")
 
 
-anchor = "https://scweb.cwb.gov.tw/zh-tw/earthquake/details/"
+    i = 0
+    for row in rows:
+        if i < len(latest_week):
+            onclick_content = str(row.get("onclick"))
+            # print(onclick_content)
+            index = onclick_content.rfind("/") + 1
+            result = onclick_content[index:-2]
+            target = anchor + result
+            # print(target)
+            driver.get(target)
+            text = driver.find_elements(By.CLASS_NAME, 'text')
+            # print(text.get_attribute("innerHTML"))
+            data = text[1].get_attribute("innerHTML").split()
+            latest_week[i].append((data[1],data[-2])) #(北緯,東經)
+            i = i + 1
+        else:
+            break
 
 
-# print(content)
-soup = BeautifulSoup(html_content, "html.parser")
-table = soup.find("table", {"id": "table"})
-table = soup.find("tbody")
-rows = table.find_all("tr")
 
-latitude_longitude = [] #(北緯,東經)
-print("---------------------")
+    list_of_factory = [[24.2115,120.618,1.063,1.0],[24.773,121.01,1.758,1.0],[23.1135,120.272,1.968,1.0]]
 
-i = 0
-for row in rows:
-    if i < len(latest_week):
-        onclick_content = str(row.get("onclick"))
-        # print(onclick_content)
-        index = onclick_content.rfind("/") + 1
-        result = onclick_content[index:-2]
-        target = anchor + result
-        # print(target)
-        driver.get(target)
-        text = driver.find_elements(By.CLASS_NAME, 'text')
-        # print(text.get_attribute("innerHTML"))
-        data = text[1].get_attribute("innerHTML").split()
-        latitude_longitude.append((data[1],data[-2]))
-        i = i + 1
-    else:
-        break
-print(latitude_longitude)
-
-PGA = PGV = [[], [], []] # [[竹] [中] [南]]
-list_of_factory = [[24.773,121.01,1.758,1.0],[24.2115,120.618,1.063,1.0],[23.1135,120.272,1.968,1.0]]
-for i in range(3):
     for j in range(len(latest_week)):
-        M = float(latest_week[j][2])
-        dis = geodesic((list_of_factory[i][0],list_of_factory[i][1]), latitude_longitude[j]).km
-        r = (dis**2 + float(latest_week[j][3]))**0.5
-        s = list_of_factory[i][2]
-        p = list_of_factory[i][-1]
-        result = 1.657*math.exp(1.533*M)*(r**-1.607)*s*p
-        PGA[i].append(result)
-        PGV[i].append(result/8.6561)
+        Location = [[], [], []] # [[中] [竹] [南]]
+        for i in range(3):
+            M = float(latest_week[j][2])
+            dis = geodesic((list_of_factory[i][0],list_of_factory[i][1]), latest_week[j][-1]).km
+            r = (dis**2 + float(latest_week[j][3]))**0.5
+            s = list_of_factory[i][2]
+            p = list_of_factory[i][-1]
+            result = 1.657*math.exp(1.533*M)*(r**-1.607)*s*p
+            Location[i].append(result)
+            Location[i].append(result/8.6561)
+        latest_week[j].append(Location)
 
-print(PGA)
-print(PGV)
+    # for i in latest_week:
+    #     print(i)
+    return latest_week[0]
+
+data = crawler()
+while True:   
+    s = crawler()
+    if data != s:
+        data = s
+        print("1")
+    else:
+        print("0")
+
+# crawler()
 
 driver.close()
