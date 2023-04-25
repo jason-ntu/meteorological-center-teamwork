@@ -17,16 +17,19 @@ def get_info(driver):
     table = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH,'//*[@id="ctl00_cphMain_gvList"]')))
     rows = table.find_elements(By.XPATH,'.//tr')
     # 水情時間[1]、有效蓄水量(萬立方公尺)[6]、蓄水百分比(%)[7]
+    index = 0
     for row in rows:
         cells = row.find_elements(By.XPATH,'.//td')
         if(len(cells)>0):
             if cells[0].text in reservoirs:
                 info = []
-                info.append(cells[0].text)
+                info.append("reservoirs"+ str(index))
                 info.append(cells[1].text)
                 info.append(cells[6].text)
                 info.append(cells[7].text)
                 results.append(info)
+                index = index + 1
+
     for info_list in results:
         print(info_list)
 
@@ -57,7 +60,7 @@ if __name__ == '__main__':
 
     print("\n水庫    水情時間    有效蓄水量(萬立方公尺)    蓄水百分比(%)")
     print("----------------------------------------------------------")
-    for i in range(0,8):
+    for i in range(0,1):
         select_year = wait.until(EC.presence_of_element_located((By.XPATH, '//*[@id="ctl00_cphMain_ucDate_cboYear"]')))
         select_month = wait.until(EC.presence_of_element_located((By.XPATH, '//*[@id="ctl00_cphMain_ucDate_cboMonth"]')))
         select_day = wait.until(EC.presence_of_element_located((By.XPATH, '//*[@id="ctl00_cphMain_ucDate_cboDay"]')))
