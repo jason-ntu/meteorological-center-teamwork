@@ -18,6 +18,20 @@ a {
     text-decoration: initial;
 }
 
+h1 {
+    position: absolute;
+    top: 0;
+    left: 0;
+    padding: 25px 40px;
+    margin: 0;
+    letter-spacing: 10px;
+    font-family: "微軟正黑體";
+    color: #aaaaaa;
+    font-size: 40px;
+    margin-right: 50px;
+    text-shadow: 10px 10px 35px rgba(0, 0, 0, 0.5);
+}
+
 .buttons {
     position: relative;
 }
