@@ -6,7 +6,7 @@ from webdriver_manager.chrome import ChromeDriverManager
 from constant.field import Field
 from model import electricity
 
-class PowerInfo:
+class ElectricityInfo:
 		
 		def __init__(self):
 			pass
