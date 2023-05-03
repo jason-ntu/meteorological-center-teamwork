@@ -15,11 +15,11 @@ Guides for users:
     python3 reservoir_info.py
     ```
   
-- Crawl the data of power.
+- Crawl the data of electricity.
 
     ``` sh  
-    cd power
-    python3 power.py
+    cd electricity
+    python3 electricity.py
     ```
 
 - crawl the data of erathquake.
