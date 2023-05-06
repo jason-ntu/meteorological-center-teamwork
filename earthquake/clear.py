@@ -43,5 +43,5 @@ dic = {
     'location': '東北方'
 }
 
-while True:
+for i in range(10):
     update_earthquake(dic)

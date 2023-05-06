@@ -29,14 +29,12 @@ collection_earthquake = db.collection("earthquake")
 
 options = Options()
 options.add_argument('--headless')
-options.add_argument("--incognito")
-options.add_argument("--nogpu")
-options.add_argument("--disable-gpu")
-options.add_argument("--window-size=1280,1280")
-options.add_argument("--no-sandbox")
-options.add_argument("--enable-javascript")
-options.add_experimental_option('useAutomationExtension', False)
-options.add_argument('--disable-blink-features=AutomationControlled')
+options.add_argument('--no-sandbox')
+options.add_argument('--disable-gpu')
+options.add_argument('--window-size=1920,1080')
+options.add_argument('--ignore-certificate-errors')
+options.add_argument('--disable-extensions')
+options.add_argument('--disable-dev-shm-usage')
 
 
 all_data = []
