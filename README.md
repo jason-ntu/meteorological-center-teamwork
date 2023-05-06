@@ -25,8 +25,16 @@ Guides for users:
 - crawl the data of erathquake.
 
     ``` sh 
-    cd reservoir
+    cd earthquake
     python3 erathquake.py
+    ```
+    - Build docker container of erathquake
+    ```
+    make
+    ```
+    - Clear docker container and image of earthquake & Clear firestore data of earthquake
+    ```
+    make clean
     ```
 
 Guides for developers:
