@@ -10,6 +10,9 @@ from datetime import datetime, timedelta
 from geopy.distance import geodesic
 from dateutil.parser import parse
 from bs4 import BeautifulSoup
+import firebase_admin
+from firebase_admin import credentials
+from firebase_admin import firestore
 import requests
 import urllib
 import re
@@ -17,6 +20,12 @@ import json
 import math
 import hashlib
 import time
+
+login = credentials.Certificate("./serviceAccountKey.json")
+firebase_admin.initialize_app(login)
+db = firestore.client()
+collection_earthquake = db.collection("earthquake")
+
 
 options = Options()
 options.add_argument('--headless')
@@ -30,7 +39,21 @@ options.add_experimental_option('useAutomationExtension', False)
 options.add_argument('--disable-blink-features=AutomationControlled')
 
 
-data = []
+all_data = []
+def update_earthquake(dic):
+    old = []
+    docs = db.collection('earthquake').stream()
+    for doc in docs:
+        old.append(doc.to_dict())
+    if len(old) <= 9:
+        for i in range(len(old)):
+            new_id = i+1
+            collection_earthquake.document(str(new_id)).set(old[i])
+    else:
+        for i in range(9):
+            new_id = i+1
+            collection_earthquake.document(str(new_id)).set(old[i])
+    collection_earthquake.document('0').set(dic)
 
 def crawler():
     driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()),options=options)
@@ -93,8 +116,6 @@ def crawler():
         else:
             break
 
-
-
     list_of_factory = [[24.2115,120.618,1.063,1.0],[24.773,121.01,1.758,1.0],[23.1135,120.272,1.968,1.0]]
 
     for j in range(len(latest_week)):
@@ -109,20 +130,39 @@ def crawler():
             Location[i].append(result)
             Location[i].append(result/8.6561)
         latest_week[j].append(Location)
+    return latest_week
 
-    # for i in latest_week:
-    #     print(i)
-    return latest_week[0]
+def update(upload):
+    upload_data = upload[:]
+    upload_data.reverse()
+    for _data in upload_data:
+        dic = {
+            'each_location': { # [[中] [北] [南]]
+                'south': {'PGA': str(_data[-1][-1][0]), 'PGV': str(_data[-1][-1][1])},
+                'middle': {'PGA': str(_data[-1][0][0]), 'PGV': str(_data[-1][0][1])},
+                'north': {'PGA': str(_data[-1][1][0]), 'PGV': str(_data[-1][1][1])}
+            }, 
+            'time': _data[1], 
+            'scale': _data[2],
+            'depth': _data[3], 
+            'magnitude': _data[0], 
+            'geopoint': '北緯' + _data[5][0] + ', 東經' + _data[5][1], 
+            'location': _data[4] 
+        }
+        # [最大震度(string),台灣時間(string),規模(string),深度(string),位置(string),
+        # (北緯(string),東京(string)),
+        # [ [PGA(string),PGV(string)](中) , [PGA(string),PGV(string)](北) , [PGA(string),PGV(string)](南)] 
+        # ]
+        update_earthquake(dic)
 
-data = crawler()
+all_data = crawler()
+update(all_data)
 while True:   
     s = crawler()
-    if data != s:
-        data = s
-        print("1")
+    if all_data != s:
+        all_data = s
+        update(all_data)
     else:
-        print("0")
-
-# crawler()
+        print("Already up to date.")
 
 driver.close()
