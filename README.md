@@ -10,21 +10,21 @@ Guides for users:
 
 - Crawl the data of reservoirs.
 
-    ``` sh  
+    ``` sh
     cd reservoir
-    python3 reservoir_info.py
+    python3 reservoir.py
     ```
-  
+
 - Crawl the data of electricity.
 
-    ``` sh  
+    ``` sh
     cd electricity
     python3 electricity.py
     ```
 
 - crawl the data of erathquake.
 
-    ``` sh 
+    ``` sh
     cd earthquake
     python3 erathquake.py
     ```
