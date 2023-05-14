@@ -27,3 +27,6 @@ RUN pip install --upgrade pip
 RUN pip install -r requirements.txt
 
 RUN chmod +x electricity.py
+
+# Run the reservior.py file when the container starts
+CMD [ "python", "./electricity.py" ]
