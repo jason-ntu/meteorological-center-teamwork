@@ -1,47 +1,93 @@
 import { useEffect, useState } from "react";
-import { onSnapshot, doc, getFirestore, collection, getDoc, query, } from "firebase/firestore"
+import { onSnapshot, doc, getFirestore, collection, getDoc, addDoc } from "firebase/firestore"
 import db from "./firebase";
+
+const Service = {
+  EARTHQUAKE: "earthquake",
+  ELECTRICITY: "electricity",
+  RESERVIOR: "reservoir",
+  ALARM: "alarms"
+}
+
+const Severity = {
+  LOW: "low",
+  MEDIUM: "medium",
+  HIGH: "high"
+};
+
+
 
 function App() {
   const [reservoirAlarmSeverity, setReservoirAlarmSeverity] = useState(0);
   const [reservoir, setReservoir] = useState([]);
-  const alarmCollectionRef = collection(db, "alarm");
-  const reservoirCollectionRef = collection(db, "reservoir");
+  const alarmsCollectionRef = collection(db, Service.ALARM);
+  const reservoirCollectionRef = collection(db, Service.RESERVIOR);
+  const firestore = getFirestore();
 
+  // const updateOldAlarm = async (id, severity) => {
+  //   const alarmDoc = doc(db, "alarms", id)
+  //   const newFields = { severity: severity };
+  //   await updateDoc(alarmDoc, newFields);
+  // }
+
+  const createAlarm = async (type, severity, description) => {
+    console.log("createAlarm")
+    // await addDoc(alarmsCollectionRef, { type: type, severity: severity, description: description, order: 1 });
+  }
+
+  const detectReservior = async (last) => {
+    for (const [reservoir, attrs] of Object.entries(last)) {
+      console.log(`${reservoir}.percentage: ` + attrs.percentage)
+      const percentage = Number(attrs.percentage.replace("%", ""));
+      let severity, description;
+      if (percentage < 10) {
+        severity = Severity.LOW;
+        description = `The remaining water of ${reservoir} is below 10%`;
+      }
+      else if (percentage < 20) {
+        severity = Severity.MEDIUM;
+        description = `The remaining water of ${reservoir} is below 20%`;
+      }
+      else if (percentage < 30) {
+        severity = Severity.HIGH;
+        description = `The remaining water of ${reservoir} is below 30%`;
+      }
+      else if (percentage > 95) {
+        severity = Severity.LOW;
+        description = `The remaining water of ${reservoir} is over 95%`;
+      }
+      else {
+        continue;
+      }
+      // updateOldAlarm()
+      createAlarm(Service.RESERVIOR, severity, description)
+    }
+  }
 
   useEffect(() => {
     const readReservoir = async () => {
-      const firestore = getFirestore()
-      const docRef = doc(firestore, "reservoir", "last")
-      const docSnap = await getDoc(docRef)
-
-      const data = docSnap.exists() ? docSnap.data() : null
-
-      if (data !== null && data !== undefined) {
-        onSnapshot(reservoirCollectionRef, (snapshot) =>
-          setReservoir(snapshot.docs.map(doc => ({ ...data, id: doc.id }))));
-      }
-
-
+      onSnapshot(reservoirCollectionRef, (snapshot) =>
+        setReservoir(snapshot.docs.map(doc => doc.data())));
     }
-    // const getReservoir = async () => {
-    //   onSnapshot(reservoirCollectionRef, (snapshot) =>
-    //     setReservoir(snapshot.docs.map(doc => ({ ...doc.data(), id: doc.id }))));
-    // };
 
-    // getReservoir();
-    readReservoir();
+    const createReservoirAlarm = async () => {
+      onSnapshot(reservoirCollectionRef, (snapshot) =>
+        snapshot.docs.map(doc => detectReservior(doc.data())));
+    }
 
-
+    return () => {
+      readReservoir();
+      createReservoirAlarm();
+    }
   }, []);
 
   return (
     <div className="root">
       {reservoir.map((last) => (
-        Object.entries(last).map(([reservoirID, reservoirAttrs]) => (
-          <div className={reservoirID}>
-            <h1>{reservoirID}</h1>
-            {Object.entries(reservoirAttrs).map(([attr, val]) => (
+        Object.entries(last).map(([reservoir, attrs]) => (
+          <div className={reservoir}>
+            <h1>{reservoir}</h1>
+            {Object.entries(attrs).map(([attr, val]) => (
               <h2>{attr}: {val}</h2>
             ))}
           </div>
