@@ -1,51 +1,83 @@
 import { useEffect, useState } from "react";
-import { onSnapshot, collection } from "firebase/firestore"
+import { collection, getDocs, addDoc, updateDoc, deleteDoc, doc } from "firebase/firestore"
 import db from "./firebase";
+import { async } from "@firebase/util";
 
 
-export default function App() {
-  // Use useState to record data
-  const [reservoir, getReservoir] = useState([]);
-  const [electricity, getElectricity] = useState([]);
-  const [earthquake, getEarthquake] = useState([]);
-  
-  //console.log('reservoir: ', reservoir);
-  //console.log('electricity: ', electricity);
-  //console.log('earthquake: ', earthquake);
+function App() {
+  const [newName, setNewName] = useState("");
+  const [newAge, setNewAge] = useState(0);
+  const [users, setUsers] = useState([]);
+  const usersCollectionRef = collection(db, 'users');
 
-  // useEffect:  requst data from firestore when loading the page
-  useEffect(()=>{
-    // Get data from reservoir 
-    const reservoir_listen = onSnapshot(collection(db,'reservoir'),(snapshot)=> 
-    getReservoir(snapshot.docs.map((doc) => doc.data())));
+  const createUser = async () => {
+    await addDoc(usersCollectionRef, { name: newName, age: Number(newAge) });
+  }
 
-    // Get data from electricity
-    const electricity_listen = onSnapshot(collection(db,'electricity'),(snapshot)=>
-    getElectricity(snapshot.docs.map((doc) => doc.data())));
+  const updateUser = async (id, age) => {
+    const userDoc = doc(db, "users", id)
+    const newFields = { age: age + 1 };
+    await updateDoc(userDoc, newFields);
+  }
 
-    // Get data from earthquake 
-    const earthquake_listen = onSnapshot(collection(db,'earthquake'),(snapshot)=>
-    getEarthquake(snapshot.docs.map((doc) => doc.data())));
+  const deleteUser = async (id) => { 
+    const userDoc = doc(db, "users", id)
+    await deleteDoc(userDoc);
+    
+  }
 
-    return () =>{
-      reservoir_listen();
-      electricity_listen();
-      earthquake_listen();
-    }
+  useEffect(() => {
+    const getUsers = async () => {
+      const data = await getDocs(usersCollectionRef);
+      setUsers(data.docs.map(doc => ({ ...doc.data(), id: doc.id })))
+    };
 
+    getUsers();
   }, []);
 
 
 
   return (
-  <div className = "root">
-    <label>Reservoir data: </label>
-    <pre>{JSON.stringify(reservoir, null, 2)}</pre>
-    <label>Electricity data: </label>
-    <pre>{JSON.stringify(electricity, null, 2)}</pre>
-    <label>Earthquake data: </label>
-    <pre>{JSON.stringify(earthquake, null, 2)}</pre>
-  </div>
-  
+    <div className="root">
+      <input
+        placeholder="Name..."
+        onChange={(event) => {
+          setNewName(event.target.value);
+        }}
+      />
+      <input
+        type="number"
+        placeholder="Age..."
+        onChange={(event) => {
+          setNewAge(event.target.value);
+        }}
+      />
+      <button onClick={createUser}> Create User</button>
+      {users.map((user) => {
+        return (
+          <div>
+            {" "}
+            <h1>Name: {user.name}</h1>
+            <h1>Age: {user.age}</h1>
+            <button
+              onClick={() => {
+                updateUser(user.id, user.age);
+              }}
+            >
+              {" "}
+              Increase Age
+            </button>
+            <button
+              onClick={() => {
+                deleteUser(user.id);
+              }}>
+              Delete User
+            </button>
+          </div>
+  );
+})}
+    </div >
   );
 }
+
+export default App;
