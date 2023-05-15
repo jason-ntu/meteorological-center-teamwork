@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
-import { collection, getDocs, addDoc, updateDoc, deleteDoc, doc } from "firebase/firestore"
+import { onSnapshot, collection, getDocs, addDoc, updateDoc, deleteDoc, doc } from "firebase/firestore"
 import db from "./firebase";
-import { async } from "@firebase/util";
 
 
 function App() {
@@ -28,8 +27,8 @@ function App() {
 
   useEffect(() => {
     const getUsers = async () => {
-      const data = await getDocs(usersCollectionRef);
-      setUsers(data.docs.map(doc => ({ ...doc.data(), id: doc.id })))
+      onSnapshot(usersCollectionRef, (snapshot) =>
+        setUsers(snapshot.docs.map(doc => ({ ...doc.data(), id: doc.id }))));
     };
 
     getUsers();
