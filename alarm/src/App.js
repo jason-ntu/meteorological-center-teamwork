@@ -1,12 +1,18 @@
 import { useEffect, useState } from "react";
-import { onSnapshot, doc, getFirestore, collection, getDoc, addDoc } from "firebase/firestore"
+import { onSnapshot, query, where, doc, getFirestore, collection, getDoc, addDoc, updateDoc } from "firebase/firestore"
 import db from "./firebase";
 
-const Service = {
+const Collection = {
   EARTHQUAKE: "earthquake",
   ELECTRICITY: "electricity",
   RESERVIOR: "reservoir",
   ALARM: "alarms"
+}
+
+const Service = {
+  EARTHQUAKE: "svc_earthquake",
+  ELECTRICITY: "svc_electricity",
+  RESERVIOR: "svc_reservoir"
 }
 
 const Severity = {
@@ -18,21 +24,27 @@ const Severity = {
 
 
 function App() {
-  const [reservoirAlarmSeverity, setReservoirAlarmSeverity] = useState(0);
+  // const [reservoirAlarmSeverity, setReservoirAlarmSeverity] = useState(0);
+  const alarmsCollectionRef = collection(db, Collection.ALARM);
   const [reservoir, setReservoir] = useState([]);
-  const alarmsCollectionRef = collection(db, Service.ALARM);
-  const reservoirCollectionRef = collection(db, Service.RESERVIOR);
-  const firestore = getFirestore();
+  const reservoirCollectionRef = collection(db, Collection.RESERVIOR);
 
-  // const updateOldAlarm = async (id, severity) => {
-  //   const alarmDoc = doc(db, "alarms", id)
-  //   const newFields = { severity: severity };
-  //   await updateDoc(alarmDoc, newFields);
-  // }
+  const increaseOrder = async (doc) => {
+    updateDoc(doc, { order: doc.data().order + 1 });
+  }
 
-  const createAlarm = async (type, severity, description) => {
+  const updateOldAlarms = async (service) => {
+    const q = query(alarmsCollectionRef, where("service", "==", Service.RESERVIOR));
+    const querySnapshot = await getDoc(q);
+    
+    // querySnapshot.array.forEach((doc) => {
+    //   increaseOrder(doc);
+    // });
+  }
+
+  const createAlarm = async (service, severity, description) => {
     console.log("createAlarm")
-    // await addDoc(alarmsCollectionRef, { type: type, severity: severity, description: description, order: 1 });
+    // await addDoc(alarmsCollectionRef, { service: service, severity: severity, description: description, order: 1 });
   }
 
   const detectReservior = async (last) => {
@@ -59,8 +71,8 @@ function App() {
       else {
         continue;
       }
-      // updateOldAlarm()
-      createAlarm(Service.RESERVIOR, severity, description)
+      updateOldAlarms(Collection.RESERVIOR);
+      createAlarm(Service.RESERVIOR, severity, description);
     }
   }
 
