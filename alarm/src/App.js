@@ -3,13 +3,16 @@ import { onSnapshot, query, where, doc, collection, getDoc, getDocs, addDoc, upd
 import db from "./firebase";
 import { Collection, Service, Severity } from "./enum";
 import { analyzeReservior } from "./reservoir";
+import { analyzeElectricity } from "./electricity";
 import { analyzeEarthquake } from "./earthquake";
 
 function App() {
   const alarmsCollectionRef = collection(db, Collection.ALARMS);
   const earthquakeCollectionRef = collection(db, Collection.EARTHQUAKE);
+  const electricityCollectionRef = collection(db, Collection.ELECTRICITY);
   const reservoirCollectionRef = collection(db, Collection.RESERVIOR);
   const [earthquake, setEarthquake] = useState([]);
+  const [electricity, setElectricity] = useState([]);
   const [reservoir, setReservoir] = useState([]);
 
   const increaseOrder = async (doc) => {
@@ -37,6 +40,7 @@ function App() {
 
   const deleteOutdatedAlarms = async () => {
     console.log("deleteOutdatedAlarms");
+    // Fixme: order should be > 10
     const q = query(alarmsCollectionRef, where("order", ">", 9));
     const querySnapshot = await getDocs(q);
     let IDs = [];
@@ -57,6 +61,17 @@ function App() {
     if (severity !== Severity.NONE) {
       await updateOldAlarms(Service.EARTHQUAKE);
       await createAlarm(Service.EARTHQUAKE, severity, description);
+      await deleteOutdatedAlarms();
+    }
+  }
+
+  const detectElectricity = async (doc) => {
+    console.log("detectElectricity");
+    var storage_rate = Number(doc.storage_rate.replace("％", ""));
+    const [severity, description] = analyzeElectricity(storage_rate);
+    if (severity !== Severity.NONE) {
+      await updateOldAlarms(Service.ELECTRICITY);
+      await createAlarm(Service.ELECTRICITY, severity, description);
       await deleteOutdatedAlarms();
     }
   }
@@ -83,6 +98,14 @@ function App() {
       });
     }
 
+    const readElectricity = async () => {
+      console.log("readElectricity");
+      onSnapshot(electricityCollectionRef, (snapshot) => {
+        setElectricity(snapshot.docs.map(doc => doc.data()));
+        snapshot.docs.map((doc) => detectElectricity(doc.data()));
+      });
+    }
+
     const readReservoir = async () => {
       console.log("readReservoir");
       onSnapshot(reservoirCollectionRef, (snapshot) => {
@@ -92,8 +115,9 @@ function App() {
     }
 
     return () => {
-      // readEarthquake();
-      // readReservoir();
+      readEarthquake();
+      readElectricity();
+      readReservoir();
     }
   }, []);
 
@@ -111,6 +135,24 @@ function App() {
       }
       <hr></hr>
       {
+        electricity.map((last) => (
+          <>
+            {Object.entries(last.region).map(([region, attrs]) => (
+              <div className={region}>
+                <h1>{region}</h1>
+                {Object.entries(attrs).map(([attr, val]) => (
+                  <h2>{attr}: {val}</h2>
+                ))}
+              </div>
+            ))}
+            <div>
+              <h1>Storage Rate: {last.storage_rate}</h1>
+            </div>
+          </>
+        ))
+      }
+      <hr></hr>
+      {
         reservoir.map((last) => (
           Object.entries(last).map(([reservoir, attrs]) => (
             <div className={reservoir}>
@@ -122,85 +164,8 @@ function App() {
           ))
         ))
       }
-      <hr></hr>
-    </div>
+    </div >
   );
 }
-
-// function App() {
-//   const [newName, setNewName] = useState("");
-//   const [newAge, setNewAge] = useState(0);
-//   const [users, setUsers] = useState([]);
-//   const usersCollectionRef = collection(db, 'users');
-
-//   const createUser = async () => {
-//     await addDoc(usersCollectionRef, { name: newName, age: Number(newAge) });
-//   }
-
-//   const updateUser = async (id, age) => {
-//     const userDoc = doc(db, "users", id)
-//     const newFields = { age: age + 1 };
-//     await updateDoc(userDoc, newFields);
-//   }
-
-//   const deleteUser = async (id) => {
-//     const userDoc = doc(db, "users", id)
-//     await deleteDoc(userDoc);
-
-//   }
-
-//   useEffect(() => {
-//     const getUsers = async () => {
-//       onSnapshot(usersCollectionRef, (snapshot) =>
-//         setUsers(snapshot.docs.map(doc => ({ ...doc.data(), id: doc.id }))));
-//     };
-
-//     getUsers();
-//   }, []);
-
-
-
-//   return (
-//     <div className="root">
-//       <input
-//         placeholder="Name..."
-//         onChange={(event) => {
-//           setNewName(event.target.value);
-//         }}
-//       />
-//       <input
-//         type="number"
-//         placeholder="Age..."
-//         onChange={(event) => {
-//           setNewAge(event.target.value);
-//         }}
-//       />
-//       <button onClick={createUser}> Create User</button>
-//       {users.map((user) => {
-//         return (
-//           <div>
-//             {" "}
-//             <h1>Name: {user.name}</h1>
-//             <h1>Age: {user.age}</h1>
-//             <button
-//               onClick={() => {
-//                 updateUser(user.id, user.age);
-//               }}
-//             >
-//               {" "}
-//               Increase Age
-//             </button>
-//             <button
-//               onClick={() => {
-//                 deleteUser(user.id);
-//               }}>
-//               Delete User
-//             </button>
-//           </div>
-//         );
-//       })}
-//     </div >
-//   );
-// }
 
 export default App;
