@@ -6,7 +6,9 @@ import { analyzeReservior } from "./reservoir";
 
 function App() {
   const alarmsCollectionRef = collection(db, Collection.ALARMS);
+  // const [earthquake, setEarthquake] = useState([]);
   const [reservoir, setReservoir] = useState([]);
+  // const earthquakeCollectionRef = collection(db, Collection.EARTHQUAKE);
   const reservoirCollectionRef = collection(db, Collection.RESERVIOR);
 
   const increaseOrder = async (doc) => {
@@ -45,6 +47,10 @@ function App() {
     });
   }
 
+  // const detectEarthquake = async (doc) => {
+
+  // }
+
   const detectReservior = async (doc) => {
     for (const [name, attrs] of Object.entries(doc)) {
       console.log(`${name}.percentage: ` + attrs.percentage)
@@ -58,6 +64,15 @@ function App() {
   }
 
   useEffect(() => {
+    // const readEarthquake = async () => {
+    //   console.log("readEarthquake");
+    //   onSnapshot(earthquakeCollectionRef, async (snapshot) => {
+    //     setEarthquake(snapshot.docs.map(doc => doc.data()));
+    //     snapshot.docs.map(doc => detectEarthquake(doc.data()));
+    //     await deleteOutdatedAlarms();
+    //   });
+    // }
+
     const readReservoir = async () => {
       console.log("readReservoir");
       onSnapshot(reservoirCollectionRef, async (snapshot) => {
@@ -68,6 +83,7 @@ function App() {
     }
 
     return () => {
+      // readEarthquake();
       readReservoir();
     }
   }, []);
