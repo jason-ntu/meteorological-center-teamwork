@@ -1,0 +1,75 @@
+/* Miscellanoeous */
+body,
+html {
+    overflow-x: hidden;
+    padding-right: 0; // resets padding right added by Bootstrap modal
+}
+
+body {
+    background: $content-bg;
+}
+
+.main-panel {
+    width: 100%;
+    min-height: 100%;
+    padding-top: 20px;
+
+    @media (max-width: 991px) {
+        margin-left: 0;
+        width: 100%;
+    }
+}
+
+.content-wrapper {
+    background: $content-bg;
+    padding: $content-padding;
+    width: 100%;
+}
+
+.donut {
+    width: 4rem;
+    height: 4rem;
+    border-radius: 50%;
+    border: 0.3rem solid rgba(#979fd0, 0.3);
+    border-top-color: #979fd0;
+    animation: 1.5s spin infinite linear;
+}
+
+.table {
+    margin-bottom: 0;
+    color: $text-muted;
+
+    thead {
+        th {
+            border-top: 0;
+            border-bottom-width: 1px;
+            font-family: $type1;
+            font-weight: $font-weight-medium;
+        }
+    }
+
+    th,
+    td {
+        vertical-align: middle;
+        font-size: $default-font-size;
+        line-height: 1;
+    }
+}
+
+.badge {
+    border-radius: .25rem;
+    font-size: 0.75rem;
+    font-weight: initial;
+    line-height: 1;
+    padding: .5rem .7rem;
+    font-family: $type1;
+    font-weight: $font-weight-medium;
+}
+
+@each $color,
+$value in $theme-colors {
+    .badge-outline-#{$color} {
+        color: $value;
+        border: 1px solid $value;
+    }
+}
