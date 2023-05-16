@@ -3,13 +3,14 @@ import { onSnapshot, query, where, doc, collection, getDoc, getDocs, addDoc, upd
 import db from "./firebase";
 import { Collection, Service, Severity } from "./enum";
 import { analyzeReservior } from "./reservoir";
+import { analyzeEarthquake } from "./earthquake";
 
 function App() {
   const alarmsCollectionRef = collection(db, Collection.ALARMS);
-  // const [earthquake, setEarthquake] = useState([]);
-  const [reservoir, setReservoir] = useState([]);
-  // const earthquakeCollectionRef = collection(db, Collection.EARTHQUAKE);
+  const earthquakeCollectionRef = collection(db, Collection.EARTHQUAKE);
   const reservoirCollectionRef = collection(db, Collection.RESERVIOR);
+  const [earthquake, setEarthquake] = useState([]);
+  const [reservoir, setReservoir] = useState([]);
 
   const increaseOrder = async (doc) => {
     const docSnap = await getDoc(doc);
@@ -18,7 +19,7 @@ function App() {
 
   const updateOldAlarms = async (service) => {
     console.log("updateOldAlarms");
-    const q = query(alarmsCollectionRef, where("service", "==", Service.RESERVIOR));
+    const q = query(alarmsCollectionRef, where("service", "==", service));
     const querySnapshot = await getDocs(q);
     let IDs = [];
     querySnapshot.forEach((doc) => {
@@ -36,20 +37,29 @@ function App() {
 
   const deleteOutdatedAlarms = async () => {
     console.log("deleteOutdatedAlarms");
-    const q = query(alarmsCollectionRef, where("order", ">", 10));
+    const q = query(alarmsCollectionRef, where("order", ">", 9));
     const querySnapshot = await getDocs(q);
     let IDs = [];
     querySnapshot.forEach((doc) => {
       IDs.push(doc.id);
     });
+    console.log(IDs);
     IDs.forEach((id) => {
       deleteDoc(doc(db, Collection.ALARMS, id));
     });
   }
 
-  // const detectEarthquake = async (doc) => {
-
-  // }
+  const detectEarthquake = async (doc) => {
+    console.log("detectEarthquake");
+    const magnitude = Number(doc.magnitude.replace("級", ""));
+    const location = doc.location;
+    const [severity, description] = analyzeEarthquake(magnitude, location);
+    if (severity !== Severity.NONE) {
+      await updateOldAlarms(Service.EARTHQUAKE);
+      await createAlarm(Service.EARTHQUAKE, severity, description);
+      await deleteOutdatedAlarms();
+    }
+  }
 
   const detectReservior = async (doc) => {
     for (const [name, attrs] of Object.entries(doc)) {
@@ -57,49 +67,62 @@ function App() {
       const percentage = Number(attrs.percentage.replace("%", ""));
       const [severity, description] = analyzeReservior(name, percentage);
       if (severity !== Severity.NONE) {
-        await updateOldAlarms(Collection.RESERVIOR);
+        await updateOldAlarms(Service.RESERVIOR);
         await createAlarm(Service.RESERVIOR, severity, description);
+        await deleteOutdatedAlarms();
       }
     }
   }
 
   useEffect(() => {
-    // const readEarthquake = async () => {
-    //   console.log("readEarthquake");
-    //   onSnapshot(earthquakeCollectionRef, async (snapshot) => {
-    //     setEarthquake(snapshot.docs.map(doc => doc.data()));
-    //     snapshot.docs.map(doc => detectEarthquake(doc.data()));
-    //     await deleteOutdatedAlarms();
-    //   });
-    // }
+    const readEarthquake = async () => {
+      console.log("readEarthquake");
+      onSnapshot(earthquakeCollectionRef, async (snapshot) => {
+        setEarthquake(snapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+        snapshot.docs.map(doc => detectEarthquake(doc.data()));
+      });
+    }
 
     const readReservoir = async () => {
       console.log("readReservoir");
-      onSnapshot(reservoirCollectionRef, async (snapshot) => {
+      onSnapshot(reservoirCollectionRef, (snapshot) => {
         setReservoir(snapshot.docs.map(doc => doc.data()));
-        snapshot.docs.map(doc => detectReservior(doc.data()));
-        await deleteOutdatedAlarms();
+        snapshot.docs.map((doc) => detectReservior(doc.data()));
       });
     }
 
     return () => {
       // readEarthquake();
-      readReservoir();
+      // readReservoir();
     }
   }, []);
 
   return (
     <div className="root">
-      {reservoir.map((last) => (
-        Object.entries(last).map(([reservoir, attrs]) => (
-          <div className={reservoir}>
-            <h1>{reservoir}</h1>
-            {Object.entries(attrs).map(([attr, val]) => (
-              <h2>{attr}: {val}</h2>
-            ))}
+      <hr></hr>
+      {
+        earthquake.map((doc) => (
+          <div className={`earthquake${doc.id}`}>
+            <h1> earthquake{doc.id}</h1>
+            <h2> location: {doc.location} </h2>
+            <h2> magnitude: {doc.magnitude} </h2>
           </div>
         ))
-      ))}
+      }
+      <hr></hr>
+      {
+        reservoir.map((last) => (
+          Object.entries(last).map(([reservoir, attrs]) => (
+            <div className={reservoir}>
+              <h1>{reservoir}</h1>
+              {Object.entries(attrs).map(([attr, val]) => (
+                <h2>{attr}: {val}</h2>
+              ))}
+            </div>
+          ))
+        ))
+      }
+      <hr></hr>
     </div>
   );
 }
