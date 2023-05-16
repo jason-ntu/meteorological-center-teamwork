@@ -1,27 +1,8 @@
 import { useEffect, useState } from "react";
 import { onSnapshot, query, where, doc, collection, getDoc, getDocs, addDoc, updateDoc, deleteDoc } from "firebase/firestore"
 import db from "./firebase";
-
-const Collection = {
-  EARTHQUAKE: "earthquake",
-  ELECTRICITY: "electricity",
-  RESERVIOR: "reservoir",
-  ALARMS: "alarms"
-}
-
-const Service = {
-  EARTHQUAKE: "svc_earthquake",
-  ELECTRICITY: "svc_electricity",
-  RESERVIOR: "svc_reservoir"
-}
-
-const Severity = {
-  LOW: "low",
-  MEDIUM: "medium",
-  HIGH: "high"
-};
-
-
+import { Collection, Service, Severity } from "./enum";
+import { analyzeReservior } from "./reservoir";
 
 function App() {
   const alarmsCollectionRef = collection(db, Collection.ALARMS);
@@ -64,43 +45,25 @@ function App() {
     });
   }
 
-  const detectReservior = async (last) => {
-    for (const [reservoir, attrs] of Object.entries(last)) {
-      console.log(`${reservoir}.percentage: ` + attrs.percentage)
+  const detectReservior = async (doc) => {
+    for (const [name, attrs] of Object.entries(doc)) {
+      console.log(`${name}.percentage: ` + attrs.percentage)
       const percentage = Number(attrs.percentage.replace("%", ""));
-      let severity, description;
-      if (percentage < 10) {
-        severity = Severity.LOW;
-        description = `The remaining water of ${reservoir} is below 10%`;
+      const [severity, description] = analyzeReservior(name, percentage);
+      if (severity !== Severity.NONE) {
+        await updateOldAlarms(Collection.RESERVIOR);
+        await createAlarm(Service.RESERVIOR, severity, description);
       }
-      else if (percentage < 20) {
-        severity = Severity.MEDIUM;
-        description = `The remaining water of ${reservoir} is below 20%`;
-      }
-      else if (percentage < 30) {
-        severity = Severity.HIGH;
-        description = `The remaining water of ${reservoir} is below 30%`;
-      }
-      else if (percentage > 95) {
-        severity = Severity.LOW;
-        description = `The remaining water of ${reservoir} is over 95%`;
-      }
-      else {
-        continue;
-      }
-      await updateOldAlarms(Collection.RESERVIOR);
-      await createAlarm(Service.RESERVIOR, severity, description);
-      await deleteOutdatedAlarms();
     }
   }
 
   useEffect(() => {
     const readReservoir = async () => {
       console.log("readReservoir");
-      onSnapshot(reservoirCollectionRef, (snapshot) => {
+      onSnapshot(reservoirCollectionRef, async (snapshot) => {
         setReservoir(snapshot.docs.map(doc => doc.data()));
-        snapshot.docs.map(doc => detectReservior(doc.data()))
-
+        snapshot.docs.map(doc => detectReservior(doc.data()));
+        await deleteOutdatedAlarms();
       });
     }
 
