@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
-import { onSnapshot, query, where, doc, getFirestore, collection, getDoc, addDoc, updateDoc } from "firebase/firestore"
+import { onSnapshot, query, where, doc, collection, getDoc, getDocs, addDoc, updateDoc, deleteDoc } from "firebase/firestore"
 import db from "./firebase";
 
 const Collection = {
   EARTHQUAKE: "earthquake",
   ELECTRICITY: "electricity",
   RESERVIOR: "reservoir",
-  ALARM: "alarms"
+  ALARMS: "alarms"
 }
 
 const Service = {
@@ -24,27 +24,44 @@ const Severity = {
 
 
 function App() {
-  // const [reservoirAlarmSeverity, setReservoirAlarmSeverity] = useState(0);
-  const alarmsCollectionRef = collection(db, Collection.ALARM);
+  const alarmsCollectionRef = collection(db, Collection.ALARMS);
   const [reservoir, setReservoir] = useState([]);
   const reservoirCollectionRef = collection(db, Collection.RESERVIOR);
 
   const increaseOrder = async (doc) => {
-    updateDoc(doc, { order: doc.data().order + 1 });
+    const docSnap = await getDoc(doc);
+    await updateDoc(doc, { order: docSnap.data().order + 1 });
   }
 
   const updateOldAlarms = async (service) => {
+    console.log("updateOldAlarms");
     const q = query(alarmsCollectionRef, where("service", "==", Service.RESERVIOR));
-    const querySnapshot = await getDoc(q);
-    
-    // querySnapshot.array.forEach((doc) => {
-    //   increaseOrder(doc);
-    // });
-  }
+    const querySnapshot = await getDocs(q);
+    let IDs = [];
+    querySnapshot.forEach((doc) => {
+      IDs.push(doc.id);
+    });
+    IDs.forEach((id) => {
+      increaseOrder(doc(db, Collection.ALARMS, id));
+    });
+  };
 
   const createAlarm = async (service, severity, description) => {
     console.log("createAlarm")
-    // await addDoc(alarmsCollectionRef, { service: service, severity: severity, description: description, order: 1 });
+    await addDoc(alarmsCollectionRef, { service: service, severity: severity, description: description, order: 1 });
+  }
+
+  const deleteOutdatedAlarms = async () => {
+    console.log("deleteOutdatedAlarms");
+    const q = query(alarmsCollectionRef, where("order", ">", 10));
+    const querySnapshot = await getDocs(q);
+    let IDs = [];
+    querySnapshot.forEach((doc) => {
+      IDs.push(doc.id);
+    });
+    IDs.forEach((id) => {
+      deleteDoc(doc(db, Collection.ALARMS, id));
+    });
   }
 
   const detectReservior = async (last) => {
@@ -71,25 +88,24 @@ function App() {
       else {
         continue;
       }
-      updateOldAlarms(Collection.RESERVIOR);
-      createAlarm(Service.RESERVIOR, severity, description);
+      await updateOldAlarms(Collection.RESERVIOR);
+      await createAlarm(Service.RESERVIOR, severity, description);
+      await deleteOutdatedAlarms();
     }
   }
 
   useEffect(() => {
     const readReservoir = async () => {
-      onSnapshot(reservoirCollectionRef, (snapshot) =>
-        setReservoir(snapshot.docs.map(doc => doc.data())));
-    }
+      console.log("readReservoir");
+      onSnapshot(reservoirCollectionRef, (snapshot) => {
+        setReservoir(snapshot.docs.map(doc => doc.data()));
+        snapshot.docs.map(doc => detectReservior(doc.data()))
 
-    const createReservoirAlarm = async () => {
-      onSnapshot(reservoirCollectionRef, (snapshot) =>
-        snapshot.docs.map(doc => detectReservior(doc.data())));
+      });
     }
 
     return () => {
       readReservoir();
-      createReservoirAlarm();
     }
   }, []);
 
