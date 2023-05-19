@@ -7,7 +7,6 @@ html {
 
 body {
     background: $content-bg;
-    border: 1px solid white;
 }
 
 .content {
@@ -26,7 +25,8 @@ body {
         thead {
             th {
                 border-top: 0;
-                border-bottom-width: 1px;
+                border-bottom-width: 2.5px;
+                font-size: $title-font-size;
                 font-family: $default-font-type;
                 font-weight: $default-font-weight;
             }

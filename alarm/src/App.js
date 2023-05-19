@@ -11,9 +11,10 @@ function App() {
   const earthquakeCollectionRef = collection(db, Collection.EARTHQUAKE);
   const electricityCollectionRef = collection(db, Collection.ELECTRICITY);
   const reservoirCollectionRef = collection(db, Collection.RESERVIOR);
-  const [earthquake, setEarthquake] = useState([]);
-  const [electricity, setElectricity] = useState([]);
-  const [reservoir, setReservoir] = useState([]);
+  const [alarms, setAlarms] = useState([]);
+  const [, setEarthquake] = useState([]);
+  const [, setElectricity] = useState([]);
+  const [, setReservoir] = useState([]);
 
   const increaseOrder = async (doc) => {
     const docSnap = await getDoc(doc);
@@ -90,6 +91,13 @@ function App() {
   }
 
   useEffect(() => {
+    const readAlarms = async () => {
+      console.log("readAlarms");
+      onSnapshot(alarmsCollectionRef, (snapshot) => {
+        setAlarms(snapshot.docs.map(doc => doc.data()));
+      });
+    }
+
     const readEarthquake = async () => {
       console.log("readEarthquake");
       onSnapshot(earthquakeCollectionRef, async (snapshot) => {
@@ -115,6 +123,7 @@ function App() {
     }
 
     return () => {
+      readAlarms();
       readEarthquake();
       readElectricity();
       readReservoir();
@@ -123,46 +132,50 @@ function App() {
 
   return (
     <div className="root">
-      <hr></hr>
+      <h1> Earthquake </h1>
       {
-        earthquake.map((doc) => (
-          <div className={`earthquake${doc.id}`}>
-            <h1> earthquake{doc.id}</h1>
-            <h2> location: {doc.location} </h2>
-            <h2> magnitude: {doc.magnitude} </h2>
+        alarms
+          .sort((a, b) => a.order - b.order)
+          .filter(doc => doc.service === "svc_earthquake") 
+          .map((doc) => (
+          <div className={`alarm${doc.id}`}>
+            <hr></hr>
+            <h2> order: {doc.order} </h2>
+            <h2> service: {doc.service} </h2>
+            <h2> severity: {doc.severity} </h2>
+            <h2> {doc.description} </h2>
           </div>
         ))
       }
-      <hr></hr>
+      <h1> Electricity </h1>
       {
-        electricity.map((last) => (
-          <>
-            {Object.entries(last.region).map(([region, attrs]) => (
-              <div className={region}>
-                <h1>{region}</h1>
-                {Object.entries(attrs).map(([attr, val]) => (
-                  <h2>{attr}: {val}</h2>
-                ))}
-              </div>
-            ))}
-            <div>
-              <h1>Storage Rate: {last.storage_rate}</h1>
-            </div>
-          </>
+        alarms
+          .sort((a, b) => a.order - b.order)
+          .filter(doc => doc.service === "svc_electricity") 
+          .map((doc) => (
+          <div className={`alarm${doc.id}`}>
+            <hr></hr>
+            <h2> order: {doc.order} </h2>
+            <h2> service: {doc.service} </h2>
+            <h2> severity: {doc.severity} </h2>
+            <h2> {doc.description} </h2>
+          </div>
         ))
       }
-      <hr></hr>
+      <h1> Reservoir </h1>
       {
-        reservoir.map((last) => (
-          Object.entries(last).map(([reservoir, attrs]) => (
-            <div className={reservoir}>
-              <h1>{reservoir}</h1>
-              {Object.entries(attrs).map(([attr, val]) => (
-                <h2>{attr}: {val}</h2>
-              ))}
+        alarms
+          .sort((a, b) => a.order - b.order)
+          .filter(doc => doc.service === "svc_reservoir")
+          .map((doc) => (
+            <div className={`alarm${doc.id}`}>
+              <hr></hr>
+              <h2> order: {doc.order} </h2>
+              <h2> service: {doc.service} </h2>
+              <h2> severity: {doc.severity} </h2>
+              <h2> {doc.description} </h2>
             </div>
           ))
-        ))
       }
     </div >
   );
