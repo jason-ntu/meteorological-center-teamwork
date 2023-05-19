@@ -7,52 +7,37 @@ html {
 
 body {
     background: $content-bg;
+    border: 1px solid white;
 }
 
-.main-panel {
-    width: 100%;
-    min-height: 100%;
-    padding-top: 20px;
-
-    @media (max-width: 991px) {
-        margin-left: 0;
-        width: 100%;
-    }
-}
-
-.content-wrapper {
+.content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
     background: $content-bg;
     padding: $content-padding;
+    height: 100vh;
     width: 100%;
-}
 
-.donut {
-    width: 4rem;
-    height: 4rem;
-    border-radius: 50%;
-    border: 0.3rem solid rgba(#979fd0, 0.3);
-    border-top-color: #979fd0;
-    animation: 1.5s spin infinite linear;
-}
+    table {
+        margin-bottom: 0;
+        color: gray;
 
-.table {
-    margin-bottom: 0;
-    color: $text-muted;
-
-    thead {
-        th {
-            border-top: 0;
-            border-bottom-width: 1px;
-            font-family: $type1;
-            font-weight: $font-weight-medium;
+        thead {
+            th {
+                border-top: 0;
+                border-bottom-width: 1px;
+                font-family: $default-font-type;
+                font-weight: $default-font-weight;
+            }
         }
-    }
 
-    th,
-    td {
-        vertical-align: middle;
-        font-size: $default-font-size;
-        line-height: 1;
+        th,
+        td {
+            vertical-align: middle;
+            font-size: $default-font-size;
+            line-height: 1;
+        }
     }
 }
 
@@ -62,12 +47,12 @@ body {
     font-weight: initial;
     line-height: 1;
     padding: .5rem .7rem;
-    font-family: $type1;
-    font-weight: $font-weight-medium;
+    font-family: $default-font-type;
+    font-weight: $default-font-weight;
 }
 
 @each $color,
-$value in $theme-colors {
+$value in $emergency-colors {
     .badge-outline-#{$color} {
         color: $value;
         border: 1px solid $value;

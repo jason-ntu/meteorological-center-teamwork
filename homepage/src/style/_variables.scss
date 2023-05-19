@@ -1,18 +1,13 @@
-$theme-colors: (
-  success: #00d25b,
-  warning: #ffab00,
-  danger: #fc424a,
+$emergency-colors: (
+  low: #00d25b,
+  medium: #ffab00,
+  high: #fc424a,
 );
 
-$content-bg: #000000;
+$content-bg: #191c24;
 $content-padding: 1.875rem 1.75rem;
 
-$card-bg: #191c24;
+$default-font-type: 'Rubik', sans-serif;
 
-$type1: 'Rubik', sans-serif;
-
-$font-weight-light: 300;
-$font-weight-medium: 500;
-$font-weight-bold: 700;
-
+$default-font-weight: 700;
 $default-font-size: .875rem; // 14px as base font size
