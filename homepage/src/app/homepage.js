@@ -5,15 +5,10 @@ import { Collection, Service, Severity } from "./enum";
 import './homepage.scss';
 
 function SeverityBadge({ severity }) {
-  if (severity === Severity.LOW) {
-    return <td><div className="badge badge-outline-low">Low Ergency</div>;</td>
-  } else if (severity === Severity.MEDIUM) {
-    return <td><div className="badge badge-outline-medium">Medium Ergency</div>;</td >
-  } else if (severity === Severity.HIGH) {
-    return <td><div className="badge badge-outline-high">High Ergency</div>;</td >
-  } else {
-    return <td><div className="badge badge-outline-none">None</div>;</td >
+  if (![Severity.LOW, Severity.MEDIUM, Severity.HIGH].includes(severity)) {
+    severity = Severity.NONE
   }
+  return <div className={`badge badge-outline-${severity}`}>{`${severity.toUpperCase()}`}</div>;
 }
 
 function Row({ alarmStates, i, totalRows }) {
@@ -22,32 +17,30 @@ function Row({ alarmStates, i, totalRows }) {
   const reservoirAlarm = alarmStates[i + totalRows * 2][0]
   return (
     <tr>
-      <SeverityBadge severity={earthquakeAlarm.severity} />
+      <td> <SeverityBadge severity={earthquakeAlarm.severity} /></td>
       <td> {earthquakeAlarm.description} </td>
-      <SeverityBadge severity={electricityAlarm.severity} />
+      <td> <SeverityBadge severity={electricityAlarm.severity} /></td>
       <td> {electricityAlarm.description} </td>
-      <SeverityBadge severity={reservoirAlarm.severity} />
+      <td> <SeverityBadge severity={reservoirAlarm.severity} /></td>
       <td> {reservoirAlarm.description} </td>
     </tr>
   )
 }
 
-
 function Homepage() {
   const alarmsCollectionRef = collection(db, Collection.ALARMS);
   const alarmStates = [
-    useState([]), useState([]), useState([]), useState([]), // earthquake
-    useState([]), useState([]), useState([]), useState([]), // electricity
-    useState([]), useState([]), useState([]), useState([]), // reservoir
+    useState([]), useState([]), useState([]), useState([]), useState([]), useState([]), useState([]), useState([]), useState([]), useState([]), // earthquake
+    useState([]), useState([]), useState([]), useState([]), useState([]), useState([]), useState([]), useState([]), useState([]), useState([]), // electricity
+    useState([]), useState([]), useState([]), useState([]), useState([]), useState([]), useState([]), useState([]), useState([]), useState([]), // reservoir
   ];
-  
+
   const totalRows = alarmStates.length / 3
 
   useEffect(() => {
-    console.log("useEffect!")
-    const readEarthquakeAlarms = async (offset = totalRows * 0) => {
-      console.log("readEarthquakeAlarms")
-      const q = query(alarmsCollectionRef, where("service", "==", Service.EARTHQUAKE))
+    console.log("useEffect")
+    const readAlarms = async (service) => {
+      const q = query(alarmsCollectionRef, where("service", "==", service))
       const doc_refs = await getDocs(q);
       const newAlarms = []
       doc_refs.forEach(alarm => {
@@ -56,50 +49,25 @@ function Homepage() {
           ...alarm.data()
         })
       })
-
-      for (let i = 0; i < totalRows; i++) {
-        const [, setAlarmState] = alarmStates[offset + i]
-        setAlarmState(newAlarms[i])
+      var offset
+      if (service == Service.EARTHQUAKE) {
+        offset = 0
+      } else if (service == Service.ELECTRICITY) {
+        offset = 1
+      } else if (service == Service.RESERVIOR) {
+        offset = 2
+      } else {
+        console.error("No such service!");
       }
-    }
-    const readElectricityAlarms = async (offset = totalRows * 1) => {
-      console.log("readElectricityAlarms")
-      const q = query(alarmsCollectionRef, where("service", "==", Service.ELECTRICITY))
-      const doc_refs = await getDocs(q);
-      const newAlarms = []
-      doc_refs.forEach(alarm => {
-        newAlarms.push({
-          id: alarm.id,
-          ...alarm.data()
-        })
-      })
-
       for (let i = 0; i < totalRows; i++) {
-        const [, setAlarmState] = alarmStates[offset + i]
-        setAlarmState(newAlarms[i])
-      }
-    }
-    const readReservoirAlarms = async (offset = totalRows * 2) => {
-      console.log("readReservoirAlarms")
-      const q = query(alarmsCollectionRef, where("service", "==", Service.RESERVIOR))
-      const doc_refs = await getDocs(q);
-      const newAlarms = []
-      doc_refs.forEach(alarm => {
-        newAlarms.push({
-          id: alarm.id,
-          ...alarm.data()
-        })
-      })
-
-      for (let i = 0; i < totalRows; i++) {
-        const [, setAlarmState] = alarmStates[offset + i]
+        const [, setAlarmState] = alarmStates[offset * totalRows + i]
         setAlarmState(newAlarms[i])
       }
     }
 
-    readEarthquakeAlarms();
-    readElectricityAlarms();
-    readReservoirAlarms();
+    readAlarms(Service.EARTHQUAKE)
+    readAlarms(Service.ELECTRICITY)
+    readAlarms(Service.RESERVIOR)
   }, []);
 
 
@@ -121,6 +89,12 @@ function Homepage() {
           <Row alarmStates={alarmStates} i={1} totalRows={totalRows} />
           <Row alarmStates={alarmStates} i={2} totalRows={totalRows} />
           <Row alarmStates={alarmStates} i={3} totalRows={totalRows} />
+          <Row alarmStates={alarmStates} i={4} totalRows={totalRows} />
+          <Row alarmStates={alarmStates} i={5} totalRows={totalRows} />
+          <Row alarmStates={alarmStates} i={6} totalRows={totalRows} />
+          <Row alarmStates={alarmStates} i={7} totalRows={totalRows} />
+          <Row alarmStates={alarmStates} i={8} totalRows={totalRows} />
+          <Row alarmStates={alarmStates} i={9} totalRows={totalRows} />
         </tbody>
       </table>
     </div >
