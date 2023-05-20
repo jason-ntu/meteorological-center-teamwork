@@ -10,7 +10,7 @@ def crawl():
 	print(json_formatted_str.decode())
 
 if __name__ == '__main__':
-		while True:
-			now = datetime.datetime.now()
-			if now.minute == 10:
-				crawl()
+	while True:
+		now = datetime.datetime.now()
+		if now.minute == 10:
+			crawl()
