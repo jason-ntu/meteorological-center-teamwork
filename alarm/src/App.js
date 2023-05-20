@@ -12,9 +12,6 @@ function App() {
   const electricityCollectionRef = collection(db, Collection.ELECTRICITY);
   const reservoirCollectionRef = collection(db, Collection.RESERVIOR);
   const [alarms, setAlarms] = useState([]);
-  const [, setEarthquake] = useState([]);
-  const [, setElectricity] = useState([]);
-  const [, setReservoir] = useState([]);
 
   const increaseOrder = async (doc) => {
     const docSnap = await getDoc(doc);
@@ -101,7 +98,7 @@ function App() {
     const readEarthquake = async () => {
       console.log("readEarthquake");
       onSnapshot(earthquakeCollectionRef, async (snapshot) => {
-        setEarthquake(snapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+        // setEarthquake(snapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
         snapshot.docs.map(doc => detectEarthquake(doc.data()));
       });
     }
@@ -109,7 +106,7 @@ function App() {
     const readElectricity = async () => {
       console.log("readElectricity");
       onSnapshot(electricityCollectionRef, (snapshot) => {
-        setElectricity(snapshot.docs.map(doc => doc.data()));
+        // setElectricity(snapshot.docs.map(doc => doc.data()));
         snapshot.docs.map((doc) => detectElectricity(doc.data()));
       });
     }
@@ -117,7 +114,7 @@ function App() {
     const readReservoir = async () => {
       console.log("readReservoir");
       onSnapshot(reservoirCollectionRef, (snapshot) => {
-        setReservoir(snapshot.docs.map(doc => doc.data()));
+        // setReservoir(snapshot.docs.map(doc => doc.data()));
         snapshot.docs.map((doc) => detectReservior(doc.data()));
       });
     }
