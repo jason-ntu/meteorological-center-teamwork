@@ -1,5 +1,5 @@
 import { React, useEffect, useState } from "react";
-import { onSnapshot, query, where, doc, collection, getDoc, getDocs, addDoc, updateDoc, deleteDoc } from "firebase/firestore"
+import { query, where, orderBy, limit, collection, getDocs } from "firebase/firestore"
 import db from "./firebase";
 import { Collection, Service, Severity } from "./enum";
 import './homepage.scss';
@@ -40,7 +40,8 @@ function Homepage() {
   useEffect(() => {
     console.log("useEffect")
     const readAlarms = async (service) => {
-      const q = query(alarmsCollectionRef, where("service", "==", service))
+      // const q = query(alarmsCollectionRef, where("service", "==", service), orderBy("order"), limit(10))
+      const q = query(alarmsCollectionRef, where("service", "==", service), limit(10))
       const doc_refs = await getDocs(q);
       const newAlarms = []
       doc_refs.forEach(alarm => {
@@ -59,7 +60,7 @@ function Homepage() {
       } else {
         console.error("No such service!");
       }
-      for (let i = 0; i < totalRows; i++) {
+      for (let i = 0; i < totalRows && i < newAlarms.length; i++) {
         const [, setAlarmState] = alarmStates[offset * totalRows + i]
         setAlarmState(newAlarms[i])
       }
