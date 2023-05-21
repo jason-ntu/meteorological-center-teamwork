@@ -40,8 +40,7 @@ function Homepage() {
   useEffect(() => {
     console.log("useEffect")
     const readAlarms = async (service) => {
-      // const q = query(alarmsCollectionRef, where("service", "==", service), orderBy("order"), limit(10))
-      const q = query(alarmsCollectionRef, where("service", "==", service), limit(10))
+      const q = query(alarmsCollectionRef, where("service", "==", service), orderBy("order"), limit(10))
       const doc_refs = await getDocs(q);
       const newAlarms = []
       doc_refs.forEach(alarm => {
