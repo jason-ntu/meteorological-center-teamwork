@@ -80,7 +80,5 @@ Guides for developers:
         npm install
         npm start
         ```
-    - FIXME:
-        -  alarm 沒有依照 order 排序
     - TODO:
         - [ ] 容器化
