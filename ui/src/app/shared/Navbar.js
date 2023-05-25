@@ -21,19 +21,19 @@ class Navbar extends Component {
             <span className="mdi mdi-menu"></span>
           </button>
           <ul className="navbar-nav w-100">
-            <li className="nav-item w-100">
+            {/* <li className="nav-item w-100">
               <form className="nav-link mt-2 mt-md-0 d-none d-lg-flex search">
                 <input type="text" className="form-control" placeholder="Search products" />
               </form>
-            </li>
+            </li> */}
           </ul>
           <ul className="navbar-nav navbar-nav-right">
             <Dropdown alignRight as="li" className="nav-item d-none d-lg-block">
                 <Dropdown.Toggle className="nav-link btn btn-success create-new-button no-caret">
-                + <Trans>Create New Project</Trans>
+                + <Trans>發送警急通知</Trans>
                 </Dropdown.Toggle>
 
-                <Dropdown.Menu className="navbar-dropdown preview-list create-new-dropdown-menu">
+                {/* <Dropdown.Menu className="navbar-dropdown preview-list create-new-dropdown-menu">
                   <h6 className="p-3 mb-0"><Trans>Projects</Trans></h6>
                   <Dropdown.Divider />
                   <Dropdown.Item href="!#" onClick={evt =>evt.preventDefault()} className="preview-item">
@@ -70,13 +70,13 @@ class Navbar extends Component {
                   </Dropdown.Item>
                   <Dropdown.Divider />
                   <p className="p-3 mb-0 text-center"><Trans>See all projects</Trans></p>
-                </Dropdown.Menu>
+                </Dropdown.Menu> */}
               </Dropdown>
-            <li className="nav-item d-none d-lg-block">
+            {/* <li className="nav-item d-none d-lg-block">
               <a className="nav-link" href="!#" onClick={event => event.preventDefault()}>
                 <i className="mdi mdi-view-grid"></i>
               </a>
-            </li>
+            </li> */}
             <Dropdown alignRight as="li" className="nav-item border-left" >
               <Dropdown.Toggle as="a" className="nav-link count-indicator cursor-pointer">
                 <i className="mdi mdi-email"></i>
@@ -181,7 +181,7 @@ class Navbar extends Component {
               <Dropdown.Toggle as="a" className="nav-link cursor-pointer no-caret">
                 <div className="navbar-profile">
                   <img className="img-xs rounded-circle" src={require('../../assets/images/faces/face15.jpg')} alt="profile" />
-                  <p className="mb-0 d-none d-sm-block navbar-profile-name"><Trans>Henry Klein</Trans></p>
+                  <p className="mb-0 d-none d-sm-block navbar-profile-name"><Trans>王小明</Trans></p>
                   <i className="mdi mdi-menu-down d-none d-sm-block"></i>
                 </div>
               </Dropdown.Toggle>

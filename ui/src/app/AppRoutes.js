@@ -11,17 +11,17 @@ const Earthquake = lazy(() => import('./earthquake/Earthquake'));
 const Reservoir = lazy(() => import('./reservoir/Reservoir'));
 // cloud_native new End of Route const
 
-const Buttons = lazy(() => import('./basic-ui/Buttons'));
-const Dropdowns = lazy(() => import('./basic-ui/Dropdowns'));
-const Typography = lazy(() => import('./basic-ui/Typography'));
+// const Buttons = lazy(() => import('./basic-ui/Buttons'));
+// const Dropdowns = lazy(() => import('./basic-ui/Dropdowns'));
+// const Typography = lazy(() => import('./basic-ui/Typography'));
 
-const BasicElements = lazy(() => import('./form-elements/BasicElements'));
+// const BasicElements = lazy(() => import('./form-elements/BasicElements'));
 
-const BasicTable = lazy(() => import('./tables/BasicTable'));
+// const BasicTable = lazy(() => import('./tables/BasicTable'));
 
-const Mdi = lazy(() => import('./icons/Mdi'));
+// const Mdi = lazy(() => import('./icons/Mdi'));
 
-const ChartJs = lazy(() => import('./charts/ChartJs'));
+// const ChartJs = lazy(() => import('./charts/ChartJs'));
 
 const Error404 = lazy(() => import('./error-pages/Error404'));
 const Error500 = lazy(() => import('./error-pages/Error500'));
@@ -41,7 +41,7 @@ class AppRoutes extends Component {
           <Route exact path="/earthquake" component={ Earthquake } />
           <Route exact path="/reservoir" component={ Reservoir } />
           {/* cloud_native new End of Route */}
-          <Route path="/basic-ui/buttons" component={ Buttons } />
+          {/* <Route path="/basic-ui/buttons" component={ Buttons } />
           <Route path="/basic-ui/dropdowns" component={ Dropdowns } />
           <Route path="/basic-ui/typography" component={ Typography } />
 
@@ -51,7 +51,7 @@ class AppRoutes extends Component {
 
           <Route path="/icons/mdi" component={ Mdi } />
 
-          <Route path="/charts/chart-js" component={ ChartJs } />
+          <Route path="/charts/chart-js" component={ ChartJs } /> */}
 
 
           <Route path="/user-pages/login-1" component={ Login } />
