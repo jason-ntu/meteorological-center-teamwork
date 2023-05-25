@@ -68,27 +68,18 @@ Guides for developers:
     - TODO:
         - [ ] 容器化
 
-- homepage service
-    - 將 alarms collection 的內容轉換以後顯示到畫面上，預設顯示前十筆，不足十筆則顯示 None，展示如下
-    - ![screenshor](./homepage/screenshot.jpg)
-    
-    
+- ui service
+    - homepage: 將 alarms collection 的內容轉換以後顯示到畫面上，預設顯示前十筆，不足十筆則顯示 None，展示如下
+
+        ![homepage](./homepage.jpg)
+    - 另有 earthquake, electricity, reservoir 等三個頁面
 
     - 使用方式
         ```
-        cd homepage
-        npm install
-        npm start
-        ```
-    - TODO:
-        - [ ] 容器化
-
-
-- UI
-    - 使用方式
-        ```
+        <!-- use node v12.22.12 -->
         cd ui
         npm install
         npm start
         ```
+
         執行完畢後，預設將在 localhost:3000 開啟專案
