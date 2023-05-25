@@ -6,8 +6,8 @@ import { Bar } from 'react-chartjs-2';
 const AverageUsageChart = ({ data}) => {
 
   return (
-    <Paper sx={{ p: 2}}>
-      <Typography variant="h6" gutterBottom>
+    <Paper sx={{ p: 2, backgroundColor: '#191c24'}}>
+      <Typography variant="h6" gutterBottom sx={{ color: 'white' }} >
         人均用電量（瓦）
       </Typography>
       {data && <Bar

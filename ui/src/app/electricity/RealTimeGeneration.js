@@ -4,8 +4,8 @@ import { Doughnut } from 'react-chartjs-2';
 
 const RealTimeGeneration = ({ data }) => {
   return (
-    <Paper sx={{ p: 2 }}>
-      <Typography variant="h6" gutterBottom>
+    <Paper sx={{ p: 2, backgroundColor: '#191c24' }}>
+      <Typography variant="h6" gutterBottom  sx={{ color: 'white' }} >
       實時產電量（萬瓩）
       </Typography>
       {data && <Doughnut data={{

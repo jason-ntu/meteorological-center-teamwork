@@ -5,8 +5,8 @@ import { Bar } from 'react-chartjs-2';
 
 const SuppliedPopulation = ({ data }) => {
   return (
-    <Paper sx={{ p: 2 }}>
-      <Typography variant="h6" gutterBottom>
+    <Paper sx={{ p: 2, backgroundColor: '#191c24' }}>
+      <Typography variant="h6" gutterBottom  sx={{ color: 'white' }} >
         供應人數（萬）
       </Typography>
       {data && <Bar
@@ -24,28 +24,6 @@ const SuppliedPopulation = ({ data }) => {
               borderWidth: 3,
               backgroundColor: ['#ff6384','#36a2eb', '#ffce56', '#4bc0c0'],
             },
-            // {
-            //   label: '供應人數（萬）',
-            //   data: [
-            //     data.region.north.supplied_population,
-            //     data.region.west.supplied_population,
-            //     data.region.south.supplied_population,
-            //     data.region.east.supplied_population,
-            //   ],
-            //   borderWidth: 3,
-            //   backgroundColor: ['#ff6384','#ff6384','#ff6384','#ff6384'], // , '#36a2eb', '#ffce56', '#4bc0c0'
-            // },
-            // {
-            //   label: '人均用電量（瓦）',
-            //   data: [
-            //     data.region.north.avg_usage_per_person,
-            //     data.region.west.avg_usage_per_person,
-            //     data.region.south.avg_usage_per_person,
-            //     data.region.east.avg_usage_per_person,
-            //   ],
-            //   borderWidth: 3,
-            //   backgroundColor: ['#4bc0c0','#4bc0c0','#4bc0c0','#4bc0c0'], // '#ff6384', '#36a2eb', '#ffce56', 
-            // },
           ],
         }}
 
