@@ -1,21 +1,22 @@
 
-export const Collection = {
+const Collection = {
     EARTHQUAKE: "earthquake",
     ELECTRICITY: "electricity",
     RESERVIOR: "reservoir",
     ALARMS: "alarms"
 }
 
-export const Service = {
+const Service = {
     EARTHQUAKE: "svc_earthquake",
     ELECTRICITY: "svc_electricity",
     RESERVIOR: "svc_reservoir"
 }
 
-export const Severity = {
+const Severity = {
     NONE: "none",
     LOW: "low",
     MEDIUM: "medium",
     HIGH: "high"
 };
 
+export { Collection, Service, Severity }

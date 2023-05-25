@@ -9,14 +9,14 @@ class Sidebar extends Component {
 
   toggleMenuState(menuState) {
     if (this.state[menuState]) {
-      this.setState({[menuState] : false});
-    } else if(Object.keys(this.state).length === 0) {
-      this.setState({[menuState] : true});
+      this.setState({ [menuState]: false });
+    } else if (Object.keys(this.state).length === 0) {
+      this.setState({ [menuState]: true });
     } else {
       Object.keys(this.state).forEach(i => {
-        this.setState({[i]: false});
+        this.setState({ [i]: false });
       });
-      this.setState({[menuState] : true}); 
+      this.setState({ [menuState]: true });
     }
   }
 
@@ -29,7 +29,7 @@ class Sidebar extends Component {
   onRouteChanged() {
     document.querySelector('#sidebar').classList.remove('active');
     Object.keys(this.state).forEach(i => {
-      this.setState({[i]: false});
+      this.setState({ [i]: false });
     });
 
     const dropdownPaths = [
@@ -42,20 +42,20 @@ class Sidebar extends Component {
       // {path:'/user-pages', state: 'userPagesMenuOpen'},
       // {path:'/error-pages', state: 'errorPagesMenuOpen'},
       // cloud_native new
-      {path:'/electricity', state: 'electricityMenuOpen'}, // 電力
-      {path:'/earthquake', state: 'earthquakeMenuOpen'}, // 地震
-      {path:'/reservoir', state: 'reservoirMenuOpen'}, // 水庫
+      { path: '/electricity', state: 'electricityMenuOpen' }, // 電力
+      { path: '/earthquake', state: 'earthquakeMenuOpen' }, // 地震
+      { path: '/reservoir', state: 'reservoirMenuOpen' }, // 水庫
     ];
 
     dropdownPaths.forEach((obj => {
       if (this.isPathActive(obj.path)) {
-        this.setState({[obj.state] : true})
+        this.setState({ [obj.state]: true })
       }
     }));
- 
+
   }
 
-  render () {
+  render() {
     return (
       <nav className="sidebar sidebar-offcanvas" id="sidebar">
         <div className="sidebar-brand-wrapper d-none d-lg-flex align-items-center justify-content-center fixed-top">
@@ -81,7 +81,7 @@ class Sidebar extends Component {
                   <i className="mdi mdi-dots-vertical"></i>
                 </Dropdown.Toggle>
                 <Dropdown.Menu className="sidebar-dropdown preview-list">
-                  <a href="!#" className="dropdown-item preview-item" onClick={evt =>evt.preventDefault()}>
+                  <a href="!#" className="dropdown-item preview-item" onClick={evt => evt.preventDefault()}>
                     <div className="preview-thumbnail">
                       <div className="preview-icon bg-dark rounded-circle">
                         <i className="mdi mdi-settings text-primary"></i>
@@ -92,7 +92,7 @@ class Sidebar extends Component {
                     </div>
                   </a>
                   <div className="dropdown-divider"></div>
-                  <a href="!#" className="dropdown-item preview-item" onClick={evt =>evt.preventDefault()}>
+                  <a href="!#" className="dropdown-item preview-item" onClick={evt => evt.preventDefault()}>
                     <div className="preview-thumbnail">
                       <div className="preview-icon bg-dark rounded-circle">
                         <i className="mdi mdi-onepassword  text-info"></i>
@@ -103,7 +103,7 @@ class Sidebar extends Component {
                     </div>
                   </a>
                   <div className="dropdown-divider"></div>
-                  <a href="!#" className="dropdown-item preview-item" onClick={evt =>evt.preventDefault()}>
+                  <a href="!#" className="dropdown-item preview-item" onClick={evt => evt.preventDefault()}>
                     <div className="preview-thumbnail">
                       <div className="preview-icon bg-dark rounded-circle">
                         <i className="mdi mdi-calendar-today text-success"></i>
@@ -120,29 +120,29 @@ class Sidebar extends Component {
           <li className="nav-item nav-category">
             <span className="nav-link"><Trans>Navigation</Trans></span>
           </li>
-          <li className={ this.isPathActive('/dashboard') ? 'nav-item menu-items active' : 'nav-item menu-items' }>
-            <Link className="nav-link" to="/dashboard">
+          <li className={this.isPathActive('/homepage') ? 'nav-item menu-items active' : 'nav-item menu-items'}>
+            <Link className="nav-link" to="/homepage">
               <span className="menu-icon"><i className="mdi mdi-speedometer"></i></span>
-              <span className="menu-title"><Trans>Dashboard</Trans></span>
+              <span className="menu-title"><Trans>Homepage</Trans></span>
             </Link>
           </li>
           {/* cloud_native new: Sidebar */}
           {/* 電力 */}
-          <li className={ this.isPathActive('/electricity') ? 'nav-item menu-items active' : 'nav-item menu-items' }>
+          <li className={this.isPathActive('/electricity') ? 'nav-item menu-items active' : 'nav-item menu-items'}>
             <Link className="nav-link" to="/electricity">
               <span className="menu-icon"><i className="mdi mdi-battery-charging-30"></i></span>
               <span className="menu-title"><Trans>Electricity</Trans></span>
             </Link>
           </li>
           {/* 水庫 */}
-          <li className={ this.isPathActive('/reservoir') ? 'nav-item menu-items active' : 'nav-item menu-items' }>
+          <li className={this.isPathActive('/reservoir') ? 'nav-item menu-items active' : 'nav-item menu-items'}>
             <Link className="nav-link" to="/reservoir">
               <span className="menu-icon"><i className="mdi mdi-water"></i></span>
               <span className="menu-title"><Trans>Reservoir</Trans></span>
             </Link>
           </li>
           {/* 地震 */}
-          <li className={ this.isPathActive('/earthquake') ? 'nav-item menu-items active' : 'nav-item menu-items' }>
+          <li className={this.isPathActive('/earthquake') ? 'nav-item menu-items active' : 'nav-item menu-items'}>
             <Link className="nav-link" to="/earthquake">
               <span className="menu-icon"><i className="mdi mdi-map-marker-radius"></i></span>
               <span className="menu-title"><Trans>Earthquake</Trans></span>
@@ -289,14 +289,14 @@ class Sidebar extends Component {
     // add class 'hover-open' to sidebar navitem while hover in sidebar-icon-only menu
     const body = document.querySelector('body');
     document.querySelectorAll('.sidebar .nav-item').forEach((el) => {
-      
-      el.addEventListener('mouseover', function() {
-        if(body.classList.contains('sidebar-icon-only')) {
+
+      el.addEventListener('mouseover', function () {
+        if (body.classList.contains('sidebar-icon-only')) {
           el.classList.add('hover-open');
         }
       });
-      el.addEventListener('mouseout', function() {
-        if(body.classList.contains('sidebar-icon-only')) {
+      el.addEventListener('mouseout', function () {
+        if (body.classList.contains('sidebar-icon-only')) {
           el.classList.remove('hover-open');
         }
       });

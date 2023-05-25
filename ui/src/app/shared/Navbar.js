@@ -155,7 +155,7 @@ class Navbar extends Component {
                   <div className="preview-item-content">
                     <h6 className="preview-subject mb-1"><Trans>Settings</Trans></h6>
                     <p className="text-muted ellipsis mb-0">
-                    <Trans>Update dashboard</Trans>
+                      <Trans>Update homepage</Trans>
                     </p>
                   </div>
                 </Dropdown.Item>

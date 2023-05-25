@@ -51,6 +51,12 @@ $theme-colors: (
   dark:            #0d0d0d
 );
 
+$emergency-colors: (
+  none: #afa8a8,
+  low: #00d25b,
+  medium: #ffab00,
+  high: #fc424a,
+);
 
 ////////// COLOR SYSTEM //////////
 
@@ -90,6 +96,10 @@ $font-weight-light: 300;
 $font-weight-medium: 500;
 $font-weight-bold: 700;
 
+$title-font-size: 1.65rem;
+
+$default-font-type: 'Rubik', sans-serif;
+$default-font-weight: 700;
 $default-font-size: .875rem; // 14px as base font size
 
 $text-muted: #6c7293;
