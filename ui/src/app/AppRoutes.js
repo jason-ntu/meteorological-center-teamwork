@@ -3,7 +3,7 @@ import { Switch, Route, Redirect } from 'react-router-dom';
 
 import Spinner from '../app/shared/Spinner';
 
-const Dashboard = lazy(() => import('./dashboard/Dashboard'));
+const Dashboard = lazy(() => import('./dashboard/Dashboard')); // TODO Homepage
 
 // cloud_native new
 const Electricity = lazy(() => import('./electricity/Electricity'));
