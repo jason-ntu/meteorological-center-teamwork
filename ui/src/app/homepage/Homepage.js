@@ -1,10 +1,10 @@
-import React, { Component, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { Collection, Service, Severity } from "./Enum";
 import { Row } from "./Row";
 import { query, where, orderBy, limit, collection, getDocs } from "firebase/firestore"
 import db from "../firebase";
-import { Collection, Service, Severity } from "./Enum";
 
-function Content() {
+const Homepage = () => {
   const alarmsCollectionRef = collection(db, Collection.ALARMS);
   const alarmStates = [
     useState([]), useState([]), useState([]), useState([]), useState([]), useState([]), useState([]), useState([]), useState([]), useState([]), // earthquake
@@ -47,7 +47,6 @@ function Content() {
     readAlarms(Service.RESERVIOR)
   }, []);
 
-
   return (
     <div div className="content" >
       <table className="table">
@@ -76,16 +75,6 @@ function Content() {
       </table>
     </div >
   );
-}
-
-export class Homepage extends Component {
-  render() {
-    return (
-      <div className="row">
-        <Content />
-      </div>
-    );
-  }
 }
 
 export default Homepage;

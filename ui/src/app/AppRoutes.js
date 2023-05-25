@@ -3,7 +3,7 @@ import { Switch, Route, Redirect } from 'react-router-dom';
 
 import Spinner from '../app/shared/Spinner';
 
-const Dashboard = lazy(() => import('./homepage/Dashboard')); // TODO Homepage
+const Homepage = lazy(() => import('./homepage/Homepage'));
 
 // cloud_native new
 const Electricity = lazy(() => import('./electricity/Electricity'));
@@ -35,7 +35,7 @@ class AppRoutes extends Component {
     return (
       <Suspense fallback={<Spinner />}>
         <Switch>
-          <Route exact path="/homepage" component={Dashboard} />
+          <Route exact path="/homepage" component={Homepage} />
           {/* cloud_native new Route */}
           <Route exact path="/electricity" component={Electricity} />
           <Route exact path="/earthquake" component={Earthquake} />
