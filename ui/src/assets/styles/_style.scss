@@ -1,0 +1,60 @@
+/* Miscellanoeous */
+body,
+html {
+    overflow-x: hidden;
+    padding-right: 0; // resets padding right added by Bootstrap modal
+}
+
+body {
+    background: $content-bg;
+}
+
+.content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: $content-bg;
+    padding: $content-padding;
+    height: 100vh;
+    width: 100%;
+
+    table {
+        margin-bottom: 0;
+        color: gray;
+
+        thead {
+            th {
+                border-top: 0;
+                border-bottom-width: 2.5px;
+                font-size: $title-font-size;
+                font-family: $default-font-type;
+                font-weight: $default-font-weight;
+            }
+        }
+
+        th,
+        td {
+            vertical-align: middle;
+            font-size: $default-font-size;
+            line-height: 1;
+        }
+    }
+}
+
+.badge {
+    border-radius: .25rem;
+    font-size: 0.75rem;
+    font-weight: initial;
+    line-height: 1;
+    padding: .5rem .7rem;
+    font-family: $default-font-type;
+    font-weight: $default-font-weight;
+}
+
+@each $color,
+$value in $emergency-colors {
+    .badge-outline-#{$color} {
+        color: $value;
+        border: 1px solid $value;
+    }
+}
