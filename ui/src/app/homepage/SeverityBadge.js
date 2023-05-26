@@ -1,5 +1,5 @@
 import React from "react";
-import { Severity } from "./Enum";
+import { Severity } from "./enum";
 
 export function SeverityBadge({ severity }) {
   if (![Severity.LOW, Severity.MEDIUM, Severity.HIGH].includes(severity)) {

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Collection, Service, Severity } from "./Enum";
+import { Collection, Service, Severity } from "./enum";
 import { Row } from "./Row";
 import { query, where, orderBy, limit, collection, getDocs } from "firebase/firestore"
 import db from "../firebase";
