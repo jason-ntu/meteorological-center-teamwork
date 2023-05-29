@@ -11,7 +11,7 @@ class ElectricityInfo:
 		def __init__(self):
 			pass
 
-		def __get_driver(self): 
+		def _get_driver(self): 
 			chrome_options = Options()
 			chrome_options.add_argument('user-agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.88 Safari/537.36"')
 			chrome_options.add_argument('--headless')
@@ -22,7 +22,7 @@ class ElectricityInfo:
 			return driver
 	
 		def get_real_time_usage(self, url):
-			driver = self.__get_driver()
+			driver = self._get_driver()
 			driver.get(url)
 			update_time = driver.find_element(By.CSS_SELECTOR, '#main-content > div.note > li.update-at').text[5:-7]
 			storage_rate = driver.find_element(By.CSS_SELECTOR, '#main-content > div.note > li:nth-child(3) > span').text
