@@ -14,15 +14,18 @@ class ElectricityTest(unittest.TestCase):
 			chrome_options.add_argument("--no-sandbox")
 			chrome_options.add_argument('--disable-dev-shm-usage')
 			self.driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()),options=chrome_options)
+			self.driver.get("https://www.taiwanstat.com/realtime/power/")
 	
 	def test_element(self):
-			self.driver.get("https://www.taiwanstat.com/realtime/power/")
 			update_time = self.driver.find_element(By.CSS_SELECTOR, '#main-content > div.note > li.update-at').text[5:-7]
+			self.assertEqual(len(update_time), 17)
+
 			storage_rate = self.driver.find_element(By.CSS_SELECTOR, '#main-content > div.note > li:nth-child(3) > span').text
+			self.assertEqual(storage_rate[-1], "％")
+
 			info = self.driver.find_elements(By.CLASS_NAME, 'gauge-container')
-			assert len(update_time) == 17
-			assert storage_rate[-1] == "％"
-			assert len(info) == 5
+			self.assertEqual(len(info), 5)
+
 	def tearDown(self):
 			self.driver.close()
 
