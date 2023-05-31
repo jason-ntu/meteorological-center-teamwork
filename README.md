@@ -17,11 +17,27 @@ Guides for users:
 
 - Crawl the data of electricity.
 
+    - Codes related to electricity service are under electricity
+    
+    - How to run service
     ``` sh
     cd electricity
     python3 electricity.py
     ```
 
+    - Build docker container of electricity service
+    ```
+    make all Makefile
+    ```
+    - Clear docker container and image of earthquake
+    ```
+    make clean Makefile
+    ```
+    - How to run unit test
+    ```
+    cd electricity/test
+    python3 test_electricity.py
+    ```
 - crawl the data of erathquake.
 
     ``` sh
