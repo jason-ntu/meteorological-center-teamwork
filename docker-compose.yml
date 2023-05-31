@@ -1,0 +1,19 @@
+version: '3'
+services:
+  alarm:
+    image: alarm:1.0.0
+    build: ./alarm
+    ports:
+      - 3000:3000
+
+  earthquake:
+    image: earthquake:1.0.0
+    build: ./earthquake
+
+  electricity:
+    image: electricity:1.0.0
+    build: ./electricity
+
+  reservoir:
+    image: reservoir:1.0.0
+    build: ./reservoir

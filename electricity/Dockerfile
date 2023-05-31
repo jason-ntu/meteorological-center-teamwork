@@ -9,7 +9,9 @@ FROM python:3.8-slim-buster
 ENV TZ=Asia/Taipei
 
 # 安裝 linux 常用套件
-RUN apt-get update && apt-get install -y wget && apt-get -y install cron && apt-get install -y procps && apt-get -y install vim && rm -rf /var/lib/apt/lists/*
+RUN apt-get update \
+    && apt-get install -y wget cron procps vim \
+     && rm -rf /var/lib/apt/lists/*
 
 # 安裝 google chrome
 RUN wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb

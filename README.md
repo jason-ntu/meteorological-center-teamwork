@@ -107,7 +107,7 @@
 - ui service
     - homepage: 將 alarms collection 的內容轉換以後顯示到畫面上，預設顯示前十筆，不足十筆則顯示 None，展示如下
 
-        ![homepage](./homepage.jpg)
+        ![homepage](./img/homepage.jpg)
     - 另有 earthquake, electricity, reservoir 等三個頁面
 
     - 使用方式

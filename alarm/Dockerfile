@@ -5,4 +5,4 @@ COPY . /alarm
 
 RUN npm install --omit=dev
 
-CMD npm start
+CMD ["npm", "start"]
