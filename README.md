@@ -1,11 +1,18 @@
 # Cloud_Native-Project
 
-Guides for users:
+- reservoir service
 
-- Install the required packages.
+  - Install the required packages.
 
-    ``` sh
-    pip install -r requirements.txt
+      ``` sh
+      pip install -r requirements.txt
+      ```
+
+  - Crawl the data of reservoirs.
+
+      ``` sh
+      cd reservoir
+      python3 reservoir.py
     ```
 
 - Crawl the data of reservoirs.
@@ -28,74 +35,72 @@ Guides for users:
     make coverage
     ```
 
-- Crawl the data of electricity.
+  - Crawl the data of electricity.
 
-    - Codes related to electricity service are under electricity
-    
-    - How to run service
-    ``` sh
-    cd electricity
-    python3 electricity.py
-    ```
+      - Codes related to electricity service are under electricity
+      
+      - How to run service
+      ``` sh
+      cd electricity
+      python3 electricity.py
+      ```
 
-    - Build docker container of electricity service
-    ```
-    make all Makefile
-    ```
-    - Clear docker container and image of earthquake
-    ```
-    make clean Makefile
-    ```
-    - How to run unit test
-    ```
-    cd electricity/test
-    python3 test_electricity.py
-    ```
-- crawl the data of erathquake.
+      - Build docker container of electricity service
+      ```
+      make all Makefile
+      ```
+      - Clear docker container and image of earthquake
+      ```
+      make clean Makefile
+      ```
+      - How to run unit test
+      ```
+      cd electricity/test
+      python3 test_electricity.py
+      ```
+
+- earthquake service
+  - crawl the data of erathquake.
 
     ``` sh
     cd earthquake
     python3 erathquake.py
     ```
+    
     - Build docker container of erathquake
     ```
     make
     ```
+    
     - Clear docker container and image of earthquake & Clear firestore data of earthquake
     ```
     make clean
     ```
 
-Guides for developers:
-- [How to write to firestore?](/write_to_firestore.pdf)
 
 - alarm service 
-    - 目前有兩個功能
-        1. 偵測
-          - 根據 earthquake、electricity、reservoir collections 產生 alarm 並存入 alarms collection
-          - 每個 alarm 有以下四個欄位：
-            - description：描述性文字，將會顯示於警報頁面上
-            - order：從1開始、由小到大排序，越久的 alarm 此欄位會越大，當 alarm 超過 10 的時候將被刪除
-            - service："svc_earthquake" / "svc_electricity" / "svc_reservoir"
-            - severity："low" / "medium" / "high"
-          - 當任一 collection 更新就會自動偵測該 collection 並產生 alarms
-          - 畫面重新整理時也會自動偵測所有的 collections 並產生 alarms
+    - 偵測
+        - 根據 earthquake、electricity、reservoir collections 產生 alarm 並存入 alarms collection
+        - 每個 alarm 有以下四個欄位：
+          - description：描述性文字，將會顯示於警報頁面上
+          - order：從1開始、由小到大排序，越久的 alarm 此欄位會越大，當 alarm 超過 10 的時候將被刪除
+          - service："svc_earthquake" / "svc_electricity" / "svc_reservoir"
+          - severity："low" / "medium" / "high"
+        - 當任一 collection 更新就會自動偵測該 collection 並產生 alarms
+        - 畫面重新整理時也會自動偵測所有的 collections 並產生 alarms
           
-        2. 預覽
-          - 可直接在瀏覽器上看到 alrams collection 的內容
-          - 此預覽為即時更新，無需重新整理畫面
+    - 預覽
+        - 可直接在瀏覽器上看到 alrams collection 的內容
+        - 此預覽為即時更新，無需重新整理畫面
     - 使用方式
-        ```
-        cd alarm
-        npm install
-        npm start
-        ```
+      - 首先 `cd alarm` 進入 alarm service
+      - 指令 `make` 建立 image 並啟動 container 以後到 localhost:3000 確認服務是否運行
+      - 指令 `make clean` 關閉 container 並刪除 image
     - FIXME: 
         - [ ] 畫面重新整理時不應該進行偵測
         - [ ] order 會重複
         - [ ] order 會超過10但沒被刪除
     - TODO:
-        - [ ] 容器化
         - [ ] 水庫名稱要 mapping
         - [ ] 加入彈跳通知
 
