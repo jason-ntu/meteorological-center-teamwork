@@ -5,4 +5,5 @@ COPY . /alarm
 
 RUN npm install --omit=dev
 
-CMD ["npm", "start"]
+ENTRYPOINT ["npm"]
+CMD ["start"]
