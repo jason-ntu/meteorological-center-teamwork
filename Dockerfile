@@ -12,6 +12,7 @@ RUN rm google-chrome-stable_current_amd64.deb \
     && rm -rf /var/lib/apt/lists/*
 
 COPY ./requirements.txt /requirements.txt
+COPY ./serviceAccountKey.json /serviceAccountKey.json
 
 RUN pip install --upgrade pip \
     && pip install -r requirements.txt
