@@ -3,7 +3,7 @@ from firebase_admin import credentials
 from firebase_admin import firestore
 #from google.cloud.firestore import GeoPoint
 
-login = credentials.Certificate("./serviceAccountKey.json")
+login = credentials.Certificate("../serviceAccountKey.json")
 
 # initialize firebase
 firebase_admin.initialize_app(login)

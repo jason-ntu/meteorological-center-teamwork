@@ -1,119 +1,47 @@
 # Cloud_Native-Project
 
-Guides for users:
+![CI](https://github.com/jhwu0513/Cloud_Native-Project/actions/workflows/CI.yml/badge.svg)
+## How to use
 
-- Install the required packages.
-
-    ``` sh
-    pip install -r requirements.txt
-    ```
-
-- Crawl the data of reservoirs.
-    - Run service
-    ``` sh
-    cd reservoir
-    python3 reservoir.py
-    ```
-     - Build docker container of reservoir service
-    ```
-    make all 
-    ```
-    - Clear docker container and image of reservoir
-    ```
-    make clean
-    ```
-    - Run unit test and test coverage
-    ```
-    make test
-    make coverage
-    ```
-
-- Crawl the data of electricity.
-
-    - Codes related to electricity service are under electricity
-    
-    - How to run service
-    ``` sh
-    cd electricity
-    python3 electricity.py
-    ```
-
-    - Build docker container of electricity service
-    ```
-    make all Makefile
-    ```
-    - Clear docker container and image of earthquake
-    ```
-    make clean Makefile
-    ```
-    - How to run unit test
-    ```
-    cd electricity/test
-    python3 test_electricity.py
-    ```
-- crawl the data of erathquake.
+- Start all the services.
 
     ``` sh
-    cd earthquake
-    python3 erathquake.py
-    ```
-    - Build docker container of erathquake
-    ```
-    make
-    ```
-    - Clear docker container and image of earthquake & Clear firestore data of earthquake
-    ```
-    make clean
+    docker-compose up
     ```
 
-Guides for developers:
-- [How to write to firestore?](/write_to_firestore.pdf)
+- Close all the services.
 
-- alarm service 
-    - 目前有兩個功能
-        1. 偵測
-          - 根據 earthquake、electricity、reservoir collections 產生 alarm 並存入 alarms collection
-          - 每個 alarm 有以下四個欄位：
-            - description：描述性文字，將會顯示於警報頁面上
-            - order：從1開始、由小到大排序，越久的 alarm 此欄位會越大，當 alarm 超過 10 的時候將被刪除
-            - service："svc_earthquake" / "svc_electricity" / "svc_reservoir"
-            - severity："low" / "medium" / "high"
-          - 當任一 collection 更新就會自動偵測該 collection 並產生 alarms
-          - 畫面重新整理時也會自動偵測所有的 collections 並產生 alarms
-          
-        2. 預覽
-          - 可直接在瀏覽器上看到 alrams collection 的內容
-          - 此預覽為即時更新，無需重新整理畫面
-    - 使用方式
-        ```
-        cd alarm
-        npm install
-        npm start
-        ```
-    - FIXME: 
-        - [ ] 畫面重新整理時不應該進行偵測
-        - [ ] order 會重複
-        - [ ] order 會超過10但沒被刪除
-    - TODO:
-        - [ ] 容器化
-        - [ ] 水庫名稱要 mapping
-        - [ ] 加入彈跳通知
+    ``` sh
+    docker-compose up
+    ```
 
-- ui service
-    - homepage: 將 alarms collection 的內容轉換以後顯示到畫面上，預設顯示前十筆，不足十筆則顯示 None，展示如下
+- Crawler services
+  - There are three crawler services for crawling information about earthquake, electricity, and reservoir, respectively.
+  - The crawled data are stored into collections (with corresponding names) in firestore dadabase.
 
-        ![homepage](./homepage.jpg)
-    - 另有 earthquake, electricity, reservoir 等三個頁面
+- Alarm service
+  - This service generates alarms according to the data provided in firebase collections.
+  - The generated alarms are stored back into a collection named alarms.
+  - Raw alarms can be found on [3031 port of localhost](http://localhost:3001). The preview will update instantly without refreshment.
+  - Each alarm in firebase contains the following fields:    
+      - description: this will be shown on homepage.
+      - order: start from 1, keep growing until larger than 10, and then the field will be deleted.
+      - service：value of either "svc_earthquake", "svc_electricity", or "svc_reservoir".
+      - severity：value of either "low", "medium", or "high".
+  - New alarms will be generated automatically when there is an update of any collection or there is a refreshment of the page on [3031 port of localhost](http://localhost:3001).
+  - FIXME: 
+      - [ ] 畫面重新整理時不應該進行偵測
+      - [ ] order 會重複
+      - [ ] order 會超過10但沒被刪除
+  - TODO:
+      - [ ] 水庫名稱要 mapping
+      - [ ] 加入彈跳通知
 
-    - 使用方式
-        ```
-        <!-- use node v12.22.12 -->
-        cd ui
-        npm install
-        npm start
-        ```
-
-        執行完畢後，預設將在 localhost:3000 開啟專案
+- UI service
+  - The UI is available on [3000 port of localhost](http://localhost:3000).
+  - homepage: provides the information of the top 10 alarms, as shown below:
+      ![homepage](./img/homepage.jpg)
+  - earthquake, electricity, and reservoir pages will show the corresponding information.
 
 ---
 ## User Story

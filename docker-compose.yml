@@ -1,0 +1,35 @@
+version: '3'
+services:
+  base:
+    image: base:1.0.0
+    build: .
+
+  earthquake:
+    image: earthquake:1.0.0
+    build: ./earthquake
+    depends_on:
+      - base
+
+  electricity:
+    image: electricity:1.0.0
+    build: ./electricity
+    depends_on:
+      - base
+
+  reservoir:
+    image: reservoir:1.0.0
+    build: ./reservoir
+    depends_on:
+      - base
+
+  alarm:
+    image: alarm:1.0.0
+    build: ./alarm
+    ports:
+      - 3001:3000
+
+  ui:
+    image: ui:1.0.0
+    build: ./ui
+    ports:
+      - 3000:3000

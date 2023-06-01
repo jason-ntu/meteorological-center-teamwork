@@ -1,0 +1,54 @@
+name: CI
+run-name: ${{ github.actor }} is testing out GitHub Actions 🚀
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    types: [opened, reopened, synchronize]
+    branches:
+      - main
+
+jobs:
+  # Label of the unit test
+  unit-test:
+    # Containers must run in Linux based operating systems
+    runs-on: ubuntu-20.04
+    # Docker Hub image that `unit-test` executes in
+    container: python:3.8-slim-buster
+
+    steps:
+      # Downloads a copy of the code in your repository before running CI tests
+      - name: Check out repository code
+        uses: actions/checkout@v3
+
+      # - name: Setup tmate session
+      #   uses: mxschmitt/action-tmate@v3
+
+      - name: Install chrome
+        run: |
+          apt-get update
+          apt-get install -y wget
+          wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+          apt-get install -y glib2.0 ./google-chrome-stable_current_amd64.deb
+
+      - name: Install dependencies
+        run: |
+          pip3 install --upgrade pip
+          if [ -f requirements.txt ]; then pip3 install -r requirements.txt; fi
+
+      - name: Test earthquake
+        run: |
+          cd earthquake
+          python3 -m unittest EarTest.py
+
+      - name: Test electricity
+        run: |
+          cd electricity/test
+          python3 -m unittest test_electricity.py
+
+      - name: Test reservoir
+        run: |
+          cd reservoir
+          python3 -m unittest reservoirTest.py
