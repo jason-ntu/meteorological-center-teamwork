@@ -1,5 +1,6 @@
 # Cloud_Native-Project
 
+![CI](https://github.com/jhwu0513/Cloud_Native-Project/actions/workflows/CI.yml/badge.svg)
 ## How to use
 
 - Start all the services.
