@@ -23,19 +23,17 @@ jobs:
       - name: Check out repository code
         uses: actions/checkout@v3
 
-      # - name: Setup tmate session
-      #   uses: mxschmitt/action-tmate@v3
+      - name: Setup tmate session
+        uses: mxschmitt/action-tmate@v3
 
       # Update fully non interactive
       - name: Install dependencies
         run: |
-          export DEBIAN_FRONTEND=noninteractive
           apt-get update
-          apt-get -o Dpkg::Options::="--force-confold" dist-upgrade -q -y --force-yes
           pip3 install --upgrade pip
           if [ -f requirements.txt ]; then pip3 install -r requirements.txt; fi
 
-      # - name: "Update env file"
+      # - name: Update env file
       #   run: |
       #     dotenv set MYSQL_HOST mysql
       #     cat .env
