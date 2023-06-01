@@ -45,8 +45,6 @@ class ReserviorTestCase(TestCase):
         self.assertEqual(mock_update_firebase.call_count, 1)
         self.assertEqual(mock_stdout.getvalue(), "reservoir ['0', 'amount', 'percentage', 'time']\n")
 
-
-
     @patch("sys.stdout", new_callable=io.StringIO)
     @patch('selenium.webdriver.Chrome')
     @patch.object(Reservoir, 'get_targetInfo')
@@ -55,7 +53,6 @@ class ReserviorTestCase(TestCase):
         mock_chrome.return_value = mock_driver
 
         self.reservoir.crawl(datetime(2023, 6, 1, 10, 0, 0))
-
         self.assertEqual(mock_get_targetInfo.call_count, 1)
 
         mock_chrome.assert_called_once_with(service=mock.ANY, options=self.reservoir.options)
