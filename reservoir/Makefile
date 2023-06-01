@@ -13,3 +13,4 @@ clean:
 	docker stop reservoir
 	docker rm -f reservoir
 	docker rmi -f reservoir
+	rm .coverage
