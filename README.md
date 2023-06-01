@@ -9,10 +9,23 @@ Guides for users:
     ```
 
 - Crawl the data of reservoirs.
-
+    - Run service
     ``` sh
     cd reservoir
     python3 reservoir.py
+    ```
+     - Build docker container of reservoir service
+    ```
+    make all 
+    ```
+    - Clear docker container and image of reservoir
+    ```
+    make clean
+    ```
+    - Run unit test and test coverage
+    ```
+    make test
+    make coverage
     ```
 
 - Crawl the data of electricity.
