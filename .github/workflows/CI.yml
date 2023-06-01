@@ -1,0 +1,55 @@
+name: CI
+run-name: ${{ github.actor }} is testing out GitHub Actions 🚀
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    types: [opened, reopened, synchronize]
+    branches:
+      - main
+
+jobs:
+  # Label of the unit test
+  unit-test:
+    # Containers must run in Linux based operating systems
+    runs-on: ubuntu-20.04
+    # Docker Hub image that `unit-test` executes in
+    container: python:3.8-slim-buster
+
+    steps:
+      # Downloads a copy of the code in your repository before running CI tests
+      - name: Check out repository code
+        uses: actions/checkout@v3
+
+      # - name: Setup tmate session
+      #   uses: mxschmitt/action-tmate@v3
+
+      # Update fully non interactive
+      - name: Install dependencies
+        run: |
+          export DEBIAN_FRONTEND=noninteractive
+          apt-get update
+          apt-get -o Dpkg::Options::="--force-confold" dist-upgrade -q -y --force-yes
+          pip3 install --upgrade pip
+          if [ -f requirements.txt ]; then pip3 install -r requirements.txt; fi
+
+      # - name: "Update env file"
+      #   run: |
+      #     dotenv set MYSQL_HOST mysql
+      #     cat .env
+
+      - name: Test earthquake
+        run: |
+          cd earthquake
+          python3 -m unittest EarTest.py
+
+      - name: Test electricity
+        run: |
+          cd electricity/test
+          python3 -m unittest test_electricity.py
+
+      - name: Test reservoir
+        run: |
+          cd reservoir
