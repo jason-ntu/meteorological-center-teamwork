@@ -4,7 +4,5 @@ WORKDIR /electricity
 
 COPY . .
 
-RUN chmod +x electricity.py
-
 ENTRYPOINT ["python3"]
 CMD ["electricity.py"]
