@@ -12,5 +12,5 @@ def crawl():
 if __name__ == '__main__':
 	while True:
 		now = datetime.datetime.now()
-		if now.minute == 10:
+		if now.minute in [10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 0]:
 			crawl()
