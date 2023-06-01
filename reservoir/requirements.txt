@@ -7,4 +7,4 @@ bs4==0.0.1
 beautifulsoup4==4.12.2
 soupsieve==2.4.1
 firebase_admin
-
+freezegun==1.2.2

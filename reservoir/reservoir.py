@@ -14,80 +14,83 @@ import firebase_admin
 from firebase_admin import credentials
 from firebase_admin import firestore
 
-
-
-
 login = credentials.Certificate("./serviceAccountKey.json")
 # initialize firebase
 firebase_admin.initialize_app(login)
 db = firestore.client()
 collection_reservoir = db.collection("reservoir")
 
-options = Options()
-options.add_argument('--headless')
-options.add_argument("--incognito")
-options.add_argument("--nogpu")
-options.add_argument("--disable-gpu")
-options.add_argument("--window-size=1280,1280")
-options.add_argument("--no-sandbox")
-options.add_argument("--enable-javascript")
-options.add_experimental_option('useAutomationExtension', False)
-options.add_argument('--disable-blink-features=AutomationControlled')
+class Reservoir:
+    options = Options()
+    def __init__(self):
+        self.options.add_argument('--headless')
+        self.options.add_argument("--incognito")
+        self.options.add_argument("--nogpu")
+        self.options.add_argument("--disable-gpu")
+        self.options.add_argument("--window-size=1280,1280")
+        self.options.add_argument("--no-sandbox")
+        self.options.add_argument("--enable-javascript")
+        self.options.add_experimental_option('useAutomationExtension', False)
+        self.options.add_argument('--disable-blink-features=AutomationControlled')
 
-def update():
-    now = datetime.datetime.now()
-    if now.minute == 0:
-        crawl(now)
-    time.sleep(60)
+    def update(self):
+        now = datetime.datetime.now()
+        if now.minute == 0:
+            self.crawl(now)
+        time.sleep(60)
 
-def update_firebase(id, amount, percentage, time):
-    key = 'reservoir' + str(id)
-    dic = {
-        key: {
-            'amount': amount,
-            'percentage': percentage,
-            'time': time
+    def update_firebase(self, id, amount, percentage, time):
+        key = 'reservoir' + str(id)
+        dic = {
+            key: {
+                'amount': amount,
+                'percentage': percentage,
+                'time': time
+            }
         }
-    }
-    collection_reservoir.document('last').update(dic)
+        collection_reservoir.document('last').update(dic)
+        return "successfully update"
 
-def get_targetInfo(driver):
-    reservoirs = ["石門水庫","寶山第二水庫","永和山水庫","鯉魚潭水庫","德基水庫","南化水庫","曾文水庫","烏山頭水庫"]
-    results = []
-    table = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH,'//*[@id="ctl00_cphMain_gvList"]')))
-    rows = table.find_elements(By.XPATH,'.//tr')
-    index = 0
-    for row in rows:
-        cells = row.find_elements(By.XPATH,'.//td')
-        if(len(cells)>0):
-            if cells[0].text in reservoirs:
-                info = []
-                info.append(str(index))
-                info.append(cells[6].text)
-                info.append(cells[7].text)
-                info.append(cells[1].text)
-                results.append(info)
-                index = index + 1
-    for info in results:
-        update_firebase(info[0], info[1], info[2], info[3])
-        print("reservoir", end=' ')
-        print(info)
+    def get_targetInfo(self,driver):
+        reservoirs = ["石門水庫","寶山第二水庫","永和山水庫","鯉魚潭水庫","德基水庫","南化水庫","曾文水庫","烏山頭水庫"]
+        results = []
+        table = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH,'//*[@id="ctl00_cphMain_gvList"]')))
+        rows = table.find_elements(By.XPATH,'.//tr')
+        index = 0
+        for row in rows:
+            cells = row.find_elements(By.XPATH,'.//td')
+            if(len(cells)>0):
+                if cells[0].text in reservoirs:
+                    info = []
+                    info.append(str(index))
+                    info.append(cells[6].text)
+                    info.append(cells[7].text)
+                    info.append(cells[1].text)
+                    results.append(info)
+                    index = index + 1
 
-def crawl(now):
-    ua = UserAgent()
-    userAgent = ua.random
+        for info in results:
+            self.update_firebase(info[0], info[1], info[2], info[3])
+            print("reservoir", end=' ')
+            print(info)
 
-    driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()),options=options)
-    driver.execute_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined})")
-    driver.execute_cdp_cmd('Network.setUserAgentOverride', {"userAgent": userAgent})
+    def crawl(self, now):
+        ua = UserAgent()
+        userAgent = ua.random
 
-    locator = (By.ID, "table")
-    driver.get('https://fhy.wra.gov.tw/ReservoirPage_2011/Statistics.aspx')
-    wait = WebDriverWait(driver, 10)
+        driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()),options=self.options)
+        driver.execute_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined})")
+        driver.execute_cdp_cmd('Network.setUserAgentOverride', {"userAgent": userAgent})
 
-    print("------------------------------------------------------------")
-    get_targetInfo(driver)
-    driver.close()
+        locator = (By.ID, "table")
+        driver.get('https://fhy.wra.gov.tw/ReservoirPage_2011/Statistics.aspx')
+        wait = WebDriverWait(driver, 10)
 
-while True:
-    update()
+        print("------------------------------------------------------------")
+        self.get_targetInfo(driver)
+        driver.close()
+
+if __name__ == '__main__': # pragma: no cover
+    _reservior = Reservoir()
+    while True:
+        _reservior.update()
