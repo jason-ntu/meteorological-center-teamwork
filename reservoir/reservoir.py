@@ -22,7 +22,7 @@ collection_reservoir = db.collection("reservoir")
 
 class Reservoir:
     options = Options()
-    def __init__(self):
+    def __init__(self): # pragma: no cover
         self.options.add_argument('--headless')
         self.options.add_argument("--incognito")
         self.options.add_argument("--nogpu")
