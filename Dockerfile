@@ -11,5 +11,7 @@ RUN apt-get install -y glib2.0 ./google-chrome-stable_current_amd64.deb
 RUN rm google-chrome-stable_current_amd64.deb \
     && rm -rf /var/lib/apt/lists/*
 
+COPY ./requirements.txt /requirements.txt
+
 RUN pip install --upgrade pip \
     && pip install -r requirements.txt

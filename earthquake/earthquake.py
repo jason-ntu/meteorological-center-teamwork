@@ -21,7 +21,7 @@ import math
 import hashlib
 import time
 
-login = credentials.Certificate("./serviceAccountKey.json")
+login = credentials.Certificate("../serviceAccountKey.json")
 firebase_admin.initialize_app(login)
 db = firestore.client()
 collection_earthquake = db.collection("earthquake")
