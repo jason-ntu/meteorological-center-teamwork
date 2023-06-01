@@ -1,25 +1,25 @@
 version: '3'
 services:
-  crawler:
-    image: df41022/crawler:1.0.0
+  base:
+    build: .
     
   earthquake:
     image: earthquake:1.0.0
     build: ./earthquake
     depends_on:
-      - crawler
+      - base
 
   electricity:
     image: electricity:1.0.0
     build: ./electricity
     depends_on:
-      - crawler
+      - base
 
   reservoir:
     image: reservoir:1.0.0
     build: ./reservoir
     depends_on:
-      - crawler
+      - base
 
   alarm:
     image: alarm:1.0.0
