@@ -1,3 +1,0 @@
-
-clean:
-	python ./clear.py
