@@ -42,10 +42,11 @@ jobs:
         run: |
           cd earthquake
           python3 -m unittest EarTest.py
+          python3 clear.py
 
       - name: Test electricity
         run: |
-          cd electricity/test
+          cd electricity
           python3 -m unittest test_electricity.py
 
       - name: Test reservoir
