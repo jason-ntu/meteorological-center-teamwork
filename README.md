@@ -34,7 +34,6 @@
       - [ ] order 會重複
       - [ ] order 會超過10但沒被刪除
   - TODO:
-      - [ ] 水庫名稱要 mapping
       - [ ] 加入彈跳通知
 
 - UI service
