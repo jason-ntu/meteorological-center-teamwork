@@ -50,6 +50,9 @@ function EarthquakeMaps({data}) {
                       {/* <th>經緯度</th> */}
                       <th>規模</th>
                       <th>強度</th>
+                      <th>tsmc: 竹</th>
+                      <th>tsmc: 中</th>
+                      <th>tsmc: 南</th>
                       <th>時間</th>
                     </tr>
                   </thead>
@@ -61,6 +64,10 @@ function EarthquakeMaps({data}) {
                         {/* <td>{quake.geopoint}</td> */}
                         <td>{quake.scale}</td>
                         <td>{quake.magnitude}</td>
+                        <td>PGA: {Number(quake.each_location.north.PGA).toFixed(5) || '-'}<br/>PGV: {Number(quake.each_location.north.PGV).toFixed(5) || '-'}</td>
+                        <td>PGA: {Number(quake.each_location.middle.PGA).toFixed(5) || '-'}<br/>PGV: {Number(quake.each_location.middle.PGV).toFixed(5) || '-'}</td>
+                        <td>PGA: {Number(quake.each_location.south.PGA).toFixed(5) || '-'}<br/>PGV: {Number(quake.each_location.south.PGV).toFixed(5) || '-'}</td>
+
                         <td>{quake.time}</td>
                       </tr>
                     ))}
@@ -73,7 +80,7 @@ function EarthquakeMaps({data}) {
         
 
         <Grid item xs={6}>
-        <Map center={[23.7, 121]} zoom={7} style={{ height: "50vh", width: "100%" }}>
+        <Map center={[23.7, 121]} zoom={7} style={{ height: "75vh", width: "100%" }}>
         <TileLayer
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
@@ -87,6 +94,9 @@ function EarthquakeMaps({data}) {
               <p>深度: {point.depth}</p>
               <p>規模: {point.scale}</p>
               <p>震級: {point.magnitude}</p>
+              <p>tsmc-竹: PGA: {Number(point.each_location.north.PGA).toFixed(5) || '-'}, PGV: {Number(point.each_location.north.PGV).toFixed(5) || '-'}</p>
+              <p>tsmc-中: PGA: {Number(point.each_location.middle.PGA).toFixed(5) || '-'}, PGV: {Number(point.each_location.middle.PGV).toFixed(5) || '-'}</p>
+              <p>tsmc-南: PGA: {Number(point.each_location.south.PGA).toFixed(5) || '-'}, PGV: {Number(point.each_location.south.PGV).toFixed(5) || '-'}</p>
             </div>
           </Popup>
         </CircleMarker>
